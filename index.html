@@ -15,7 +15,6 @@
 </head>
 <body class="bg-slate-950 text-slate-100 font-sans min-h-screen flex flex-col justify-between selection:bg-cyan-500 selection:text-slate-900">
 
-    <!-- 頂部標頭 (Header) -->
     <header class="bg-slate-900 border-b border-slate-800 p-5 sticky top-0 z-50 shadow-lg backdrop-blur-md bg-opacity-90">
         <div class="max-w-4xl mx-auto flex justify-between items-center">
             <div>
@@ -28,23 +27,19 @@
         </div>
     </header>
 
-    <!-- 主內容區 (Main Content) -->
     <main class="flex-grow p-4 md:p-8 max-w-4xl mx-auto w-full flex flex-col justify-center">
         
-        <!-- 行動端導引提示 -->
         <div class="mb-6 bg-gradient-to-r from-slate-900 via-slate-900 to-cyan-950/30 p-4 rounded-xl border border-slate-800 shadow-xl">
             <div class="flex items-center space-x-3">
                 <div class="w-2 h-2 rounded-full bg-cyan-400 shadow-[0_0_8px_#22d3ee]"></div>
                 <p class="text-xs text-slate-400 tracking-wide">
-                    中樞控制台已就緒。現有專案與報告已同步，手機查閱專用。
+                    中樞控制台已就緒。核心維度與即時流動狀態已完成同步，手機查閱專用。
                 </p>
             </div>
         </div>
 
-        <!-- 雙欄/對稱矩陣：手機端垂直流動，大螢幕端橫向平衡 -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
             
-            <!-- 營運與歷史報告庫 -->
             <a href="https://script.google.com/macros/s/AKfycbztmbCrEtk0DZVIKSvFcfrAWTI_kie2Od6YDzo8HqEUHPjYAeZVcv0STi2kxnykrlQ7NQ/exec?mode=report" 
                class="active-tap block bg-slate-900 hover:bg-slate-850 p-6 rounded-2xl border border-slate-800 hover:border-cyan-500/50 transition-all duration-300 shadow-md group">
                 <div class="flex justify-between items-start mb-4">
@@ -59,7 +54,6 @@
                 <p class="text-xs text-slate-400 leading-relaxed">現有報告同步・手機查閱專用版。解構過往數據，提供嚴謹的決策推導基石。</p>
             </a>
 
-            <!-- 專案技術文件庫 -->
             <a href="https://script.google.com/macros/s/AKfycbztmbCrEtk0DZVIKSvFcfrAWTI_kie2Od6YDzo8HqEUHPjYAeZVcv0STi2kxnykrlQ7NQ/exec?mode=tech" 
                class="active-tap block bg-slate-900 hover:bg-slate-850 p-6 rounded-2xl border border-slate-800 hover:border-emerald-500/50 transition-all duration-300 shadow-md group">
                 <div class="flex justify-between items-start mb-4">
@@ -75,9 +69,36 @@
                 <p class="text-xs text-slate-400 leading-relaxed">現有專案同步・手機查閱專用版。收納核心技術細節，如數位考古般嚴密留存。</p>
             </a>
 
+            <a href="https://script.google.com/macros/s/AKfycbzMa_dSE63u7nX30kewJ52BNRyKS21Fl6v6VjWPGu-1oXlTlNrfC-2JOTkJ57eX5i4j/exec?page=archive_mobile" 
+               class="active-tap block bg-slate-900 hover:bg-slate-850 p-6 rounded-2xl border border-slate-800 hover:border-amber-500/50 transition-all duration-300 shadow-md group">
+                <div class="flex justify-between items-start mb-4">
+                    <div class="p-3 bg-amber-500/10 rounded-xl text-amber-400 group-hover:bg-amber-500/20 transition-colors">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+                        </svg>
+                    </div>
+                    <span class="text-[10px] font-mono text-slate-500 bg-slate-950 px-2.5 py-1 rounded-md border border-slate-800">EXCEPTION</span>
+                </div>
+                <h3 class="text-lg font-bold text-slate-200 mb-1.5 group-hover:text-amber-400 transition-colors">RRR 特殊異常案件追蹤</h3>
+                <p class="text-xs text-slate-400 leading-relaxed">特殊個案動態追蹤・手機歸檔專用版。針對非標準化案件進行聚焦，剖析技術真相。</p>
+            </a>
+
+            <a href="https://script.google.com/macros/s/AKfycbzMa_dSE63u7nX30kewJ52BNRyKS21Fl6v6VjWPGu-1oXlTlNrfC-2JOTkJ57eX5i4j/exec?page=mobile" 
+               class="active-tap block bg-slate-900 hover:bg-slate-850 p-6 rounded-2xl border border-slate-800 hover:border-rose-500/50 transition-all duration-300 shadow-md group">
+                <div class="flex justify-between items-start mb-4">
+                    <div class="p-3 bg-rose-500/10 rounded-xl text-rose-400 group-hover:bg-rose-500/20 transition-colors">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                    </div>
+                    <span class="text-[10px] font-mono text-slate-500 bg-slate-950 px-2.5 py-1 rounded-md border border-slate-800">PENDING</span>
+                </div>
+                <h3 class="text-lg font-bold text-slate-200 mb-1.5 group-hover:text-rose-400 transition-colors">廠內待料與時效滯留監控</h3>
+                <p class="text-xs text-slate-400 leading-relaxed">即時待料狀態同步・行動端查閱專用。精準掌握物料滯留節點，化等待為制敵先機。</p>
+            </a>
+
         </div>
 
-        <!-- 考勤點名面板 (寬幅強調區塊) -->
         <div class="mt-4 md:mt-6">
             <a href="https://script.google.com/macros/s/AKfycbzFO_K9PIX93jvodqQ3Y4nV9NciU3h3Ek8t1hpyh4Vu3lfIn_gxtSqipCYqjvSg04Kc3w/exec" 
                class="active-tap block bg-gradient-to-br from-slate-900 to-slate-950 hover:from-slate-850 hover:to-slate-900 p-6 rounded-2xl border border-slate-800 hover:border-indigo-500/50 transition-all duration-300 shadow-lg group">
@@ -99,7 +120,6 @@
         </div>
     </main>
 
-    <!-- 底部版權宣告 (Footer) -->
     <footer class="bg-slate-950 p-4 text-center text-[11px] text-slate-600 border-t border-slate-900/80 tracking-widest font-mono">
         © 2026 Soros Central Hub. All Rights Reserved.
     </footer>
