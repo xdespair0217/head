@@ -3,86 +3,105 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>尚鵬內湖數位中樞控制台</title>
+    <title>Soros Central Hub</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        /* 針對手機端優化觸控體驗 */
+        /* 針對行動端微縮觸控優化 */
         .active-tap:active {
             transform: scale(0.98);
             transition: transform 0.1s ease;
         }
     </style>
 </head>
-<body class="bg-slate-900 text-slate-100 font-sans min-h-screen flex flex-col justify-between">
+<body class="bg-slate-950 text-slate-100 font-sans min-h-screen flex flex-col justify-between selection:bg-cyan-500 selection:text-slate-900">
 
-    <header class="bg-slate-800 border-b border-slate-700 p-4 sticky top-0 z-50 shadow-md">
-        <div class="max-w-6xl mx-auto flex justify-between items-center">
-            <h1 class="text-xl font-bold tracking-wider text-cyan-400">尚鵬內湖數位中樞控制台</h1>
-            <span class="text-xs bg-slate-700 text-slate-300 px-2.5 py-1 rounded-full border border-slate-600">系統運作中</span>
+    <!-- 頂部標頭 (Header) -->
+    <header class="bg-slate-900 border-b border-slate-800 p-5 sticky top-0 z-50 shadow-lg backdrop-blur-md bg-opacity-90">
+        <div class="max-w-4xl mx-auto flex justify-between items-center">
+            <div>
+                <h1 class="text-xl font-bold tracking-widest text-cyan-400">Soros Central Hub</h1>
+                <p class="text-[10px] text-slate-500 tracking-wider mt-0.5 uppercase">Digital Infrastructure & Observation</p>
+            </div>
+            <span class="text-xs bg-cyan-950 text-cyan-400 px-3 py-1 rounded-full border border-cyan-800/50 font-mono shadow-inner animate-pulse">
+                ONLINE
+            </span>
         </div>
     </header>
 
-    <main class="flex-grow p-4 md:p-8 max-w-6xl mx-auto w-full">
+    <!-- 主內容區 (Main Content) -->
+    <main class="flex-grow p-4 md:p-8 max-w-4xl mx-auto w-full flex flex-col justify-center">
         
-        <div class="mb-6 bg-gradient-to-r from-cyan-900/40 to-slate-800 p-4 rounded-xl border border-cyan-500/30 shadow-lg">
-            <h2 class="text-xs font-semibold uppercase tracking-wider text-cyan-400 mb-1">最新動態</h2>
-            <p class="text-sm text-slate-300">請注意：各樓層布告欄與點名簿已完成系統整合，點擊下方卡片即可跳轉。</p>
+        <!-- 行動端導引提示 -->
+        <div class="mb-6 bg-gradient-to-r from-slate-900 via-slate-900 to-cyan-950/30 p-4 rounded-xl border border-slate-800 shadow-xl">
+            <div class="flex items-center space-x-3">
+                <div class="w-2 h-2 rounded-full bg-cyan-400 shadow-[0_0_8px_#22d3ee]"></div>
+                <p class="text-xs text-slate-400 tracking-wide">
+                    中樞控制台已就緒。現有專案與報告已同步，手機查閱專用。
+                </p>
+            </div>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
+        <!-- 雙欄/對稱矩陣：手機端垂直流動，大螢幕端橫向平衡 -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
             
-            <a href="你的1樓網頁路徑.html" class="active-tap block bg-slate-800 hover:bg-slate-750 p-6 rounded-xl border border-slate-700 hover:border-cyan-500 transition-all duration-300 shadow-md group">
+            <!-- 營運與歷史報告庫 -->
+            <a href="https://script.google.com/macros/s/AKfycbztmbCrEtk0DZVIKSvFcfrAWTI_kie2Od6YDzo8HqEUHPjYAeZVcv0STi2kxnykrlQ7NQ/exec?mode=report" 
+               class="active-tap block bg-slate-900 hover:bg-slate-850 p-6 rounded-2xl border border-slate-800 hover:border-cyan-500/50 transition-all duration-300 shadow-md group">
                 <div class="flex justify-between items-start mb-4">
-                    <div class="p-3 bg-blue-500/10 rounded-lg text-blue-400 group-hover:bg-blue-500/20">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"></path></svg>
+                    <div class="p-3 bg-cyan-500/10 rounded-xl text-cyan-400 group-hover:bg-cyan-500/20 transition-colors">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                        </svg>
                     </div>
-                    <span class="text-xs text-slate-500 bg-slate-900 px-2 py-0.5 rounded">1F</span>
+                    <span class="text-[10px] font-mono text-slate-500 bg-slate-950 px-2.5 py-1 rounded-md border border-slate-800">REPORT</span>
                 </div>
-                <h3 class="text-lg font-bold text-slate-200 mb-1 group-hover:text-cyan-400">1樓 布告欄</h3>
-                <p class="text-xs text-slate-400">入口大廳公告、出入管制與基礎日常訊息轉接。</p>
+                <h3 class="text-lg font-bold text-slate-200 mb-1.5 group-hover:text-cyan-400 transition-colors">廠區營運與歷史報告庫</h3>
+                <p class="text-xs text-slate-400 leading-relaxed">現有報告同步・手機查閱專用版。解構過往數據，提供嚴謹的決策推導基石。</p>
             </a>
 
-            <a href="你的3樓網頁路徑.html" class="active-tap block bg-slate-800 hover:bg-slate-750 p-6 rounded-xl border border-slate-700 hover:border-cyan-500 transition-all duration-300 shadow-md group">
+            <!-- 專案技術文件庫 -->
+            <a href="https://script.google.com/macros/s/AKfycbztmbCrEtk0DZVIKSvFcfrAWTI_kie2Od6YDzo8HqEUHPjYAeZVcv0STi2kxnykrlQ7NQ/exec?mode=tech" 
+               class="active-tap block bg-slate-900 hover:bg-slate-850 p-6 rounded-2xl border border-slate-800 hover:border-emerald-500/50 transition-all duration-300 shadow-md group">
                 <div class="flex justify-between items-start mb-4">
-                    <div class="p-3 bg-purple-500/10 rounded-lg text-purple-400 group-hover:bg-purple-500/20">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"></path></svg>
+                    <div class="p-3 bg-emerald-500/10 rounded-xl text-emerald-400 group-hover:bg-emerald-500/20 transition-colors">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                        </svg>
                     </div>
-                    <span class="text-xs text-slate-500 bg-slate-900 px-2 py-0.5 rounded">3F</span>
+                    <span class="text-[10px] font-mono text-slate-500 bg-slate-950 px-2.5 py-1 rounded-md border border-slate-800">TECH</span>
                 </div>
-                <h3 class="text-lg font-bold text-slate-200 mb-1 group-hover:text-cyan-400">3樓 布告欄</h3>
-                <p class="text-xs text-slate-400">技術工作區、內部專案進度與核心業務交辦資訊。</p>
-            </a>
-
-            <a href="你的4樓網頁路徑.html" class="active-tap block bg-slate-800 hover:bg-slate-750 p-6 rounded-xl border border-slate-700 hover:border-cyan-500 transition-all duration-300 shadow-md group">
-                <div class="flex justify-between items-start mb-4">
-                    <div class="p-3 bg-amber-500/10 rounded-lg text-amber-400 group-hover:bg-amber-500/20">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"></path></svg>
-                    </div>
-                    <span class="text-xs text-slate-500 bg-slate-900 px-2 py-0.5 rounded">4F</span>
-                </div>
-                <h3 class="text-lg font-bold text-slate-200 mb-1 group-hover:text-cyan-400">4樓 布告欄</h3>
-                <p class="text-xs text-slate-400">行政與後勤管理、長期規劃與外部聯絡事項公告。</p>
+                <h3 class="text-lg font-bold text-slate-200 mb-1.5 group-hover:text-emerald-400 transition-colors">廠區專案技術文件庫</h3>
+                <p class="text-xs text-slate-400 leading-relaxed">現有專案同步・手機查閱專用版。收納核心技術細節，如數位考古般嚴密留存。</p>
             </a>
 
         </div>
 
+        <!-- 考勤點名面板 (寬幅強調區塊) -->
         <div class="mt-4 md:mt-6">
-            <a href="https://script.google.com/macros/s/AKfycbzFO_K9PIX93jvodqQ3Y4nV9NciU3h3Ek8t1hpyh4Vu3lfIn_gxtSqipCYqjvSg04Kc3w/exec" class="active-tap block bg-gradient-to-br from-slate-800 to-slate-900 hover:from-slate-750 hover:to-slate-800 p-6 rounded-xl border border-slate-700 hover:border-emerald-500 transition-all duration-300 shadow-md group">
+            <a href="https://script.google.com/macros/s/AKfycbzFO_K9PIX93jvodqQ3Y4nV9NciU3h3Ek8t1hpyh4Vu3lfIn_gxtSqipCYqjvSg04Kc3w/exec" 
+               class="active-tap block bg-gradient-to-br from-slate-900 to-slate-950 hover:from-slate-850 hover:to-slate-900 p-6 rounded-2xl border border-slate-800 hover:border-indigo-500/50 transition-all duration-300 shadow-lg group">
                 <div class="flex items-center space-x-4">
-                    <div class="p-3 bg-emerald-500/10 rounded-lg text-emerald-400 group-hover:bg-emerald-500/20">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path></svg>
+                    <div class="p-3 bg-indigo-500/10 rounded-xl text-indigo-400 group-hover:bg-indigo-500/20 transition-colors">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                        </svg>
                     </div>
-                    <div>
-                        <h3 class="text-lg font-bold text-slate-200 group-hover:text-emerald-400">全體人員動態點名簿</h3>
-                        <p class="text-xs text-slate-400 mt-0.5">即時人員在位狀態、出勤紀錄與日常簽到轉接系統。</p>
+                    <div class="flex-grow">
+                        <div class="flex items-center justify-between">
+                            <h3 class="text-lg font-bold text-slate-200 group-hover:text-indigo-400 transition-colors">尚鵬內湖廠 考勤點名面板</h3>
+                            <span class="text-[10px] font-mono text-indigo-400 bg-indigo-950/50 px-2 py-0.5 rounded border border-indigo-900/30">REAL-TIME</span>
+                        </div>
+                        <p class="text-xs text-slate-400 mt-1 leading-relaxed">即時人員在位狀態、出勤紀錄與日常簽到轉接系統。精準掌握場域內的人流脈絡。</p>
                     </div>
                 </div>
             </a>
         </div>
     </main>
 
-    <footer class="bg-slate-950 p-3 text-center text-xs text-slate-600 border-t border-slate-800">
-        <span>© 2026 Black Box Central Hub. 騎車請注意安全。</span>
+    <!-- 底部版權宣告 (Footer) -->
+    <footer class="bg-slate-950 p-4 text-center text-[11px] text-slate-600 border-t border-slate-900/80 tracking-widest font-mono">
+        © 2026 Soros Central Hub. All Rights Reserved.
     </footer>
 
 </body>
