@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Black Box 中樞控制台</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* 針對手機端優化觸控體驗 */
+        .active-tap:active {
+            transform: scale(0.98);
+            transition: transform 0.1s ease;
+        }
+    </style>
+</head>
+<body class="bg-slate-900 text-slate-100 font-sans min-h-screen flex flex-col justify-between">
+
+    <header class="bg-slate-800 border-b border-slate-700 p-4 sticky top-0 z-50 shadow-md">
+        <div class="max-w-6xl mx-auto flex justify-between items-center">
+            <h1 class="text-xl font-bold tracking-wider text-cyan-400">數位中樞控制台</h1>
+            <span class="text-xs bg-slate-700 text-slate-300 px-2.5 py-1 rounded-full border border-slate-600">系統運作中</span>
+        </div>
+    </header>
+
+    <main class="flex-grow p-4 md:p-8 max-w-6xl mx-auto w-full">
+        
+        <div class="mb-6 bg-gradient-to-r from-cyan-900/40 to-slate-800 p-4 rounded-xl border border-cyan-500/30 shadow-lg">
+            <h2 class="text-xs font-semibold uppercase tracking-wider text-cyan-400 mb-1">最新動態</h2>
+            <p class="text-sm text-slate-300">請注意：各樓層布告欄與點名簿已完成系統整合，點擊下方卡片即可跳轉。</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
+            
+            <a href="你的1樓網頁路徑.html" class="active-tap block bg-slate-800 hover:bg-slate-750 p-6 rounded-xl border border-slate-700 hover:border-cyan-500 transition-all duration-300 shadow-md group">
+                <div class="flex justify-between items-start mb-4">
+                    <div class="p-3 bg-blue-500/10 rounded-lg text-blue-400 group-hover:bg-blue-500/20">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"></path></svg>
+                    </div>
+                    <span class="text-xs text-slate-500 bg-slate-900 px-2 py-0.5 rounded">1F</span>
+                </div>
+                <h3 class="text-lg font-bold text-slate-200 mb-1 group-hover:text-cyan-400">1樓 布告欄</h3>
+                <p class="text-xs text-slate-400">入口大廳公告、出入管制與基礎日常訊息轉接。</p>
+            </a>
+
+            <a href="你的3樓網頁路徑.html" class="active-tap block bg-slate-800 hover:bg-slate-750 p-6 rounded-xl border border-slate-700 hover:border-cyan-500 transition-all duration-300 shadow-md group">
+                <div class="flex justify-between items-start mb-4">
+                    <div class="p-3 bg-purple-500/10 rounded-lg text-purple-400 group-hover:bg-purple-500/20">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"></path></svg>
+                    </div>
+                    <span class="text-xs text-slate-500 bg-slate-900 px-2 py-0.5 rounded">3F</span>
+                </div>
+                <h3 class="text-lg font-bold text-slate-200 mb-1 group-hover:text-cyan-400">3樓 布告欄</h3>
+                <p class="text-xs text-slate-400">技術工作區、內部專案進度與核心業務交辦資訊。</p>
+            </a>
+
+            <a href="你的4樓網頁路徑.html" class="active-tap block bg-slate-800 hover:bg-slate-750 p-6 rounded-xl border border-slate-700 hover:border-cyan-500 transition-all duration-300 shadow-md group">
+                <div class="flex justify-between items-start mb-4">
+                    <div class="p-3 bg-amber-500/10 rounded-lg text-amber-400 group-hover:bg-amber-500/20">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"></path></svg>
+                    </div>
+                    <span class="text-xs text-slate-500 bg-slate-900 px-2 py-0.5 rounded">4F</span>
+                </div>
+                <h3 class="text-lg font-bold text-slate-200 mb-1 group-hover:text-cyan-400">4樓 布告欄</h3>
+                <p class="text-xs text-slate-400">行政與後勤管理、長期規劃與外部聯絡事項公告。</p>
+            </a>
+
+        </div>
+
+        <div class="mt-4 md:mt-6">
+            <a href="你的點名簿網頁路徑.html" class="active-tap block bg-gradient-to-br from-slate-800 to-slate-900 hover:from-slate-750 hover:to-slate-800 p-6 rounded-xl border border-slate-700 hover:border-emerald-500 transition-all duration-300 shadow-md group">
+                <div class="flex items-center space-x-4">
+                    <div class="p-3 bg-emerald-500/10 rounded-lg text-emerald-400 group-hover:bg-emerald-500/20">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path></svg>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-bold text-slate-200 group-hover:text-emerald-400">全體人員動態點名簿</h3>
+                        <p class="text-xs text-slate-400 mt-0.5">即時人員在位狀態、出勤紀錄與日常簽到轉接系統。</p>
+                    </div>
+                </div>
+            </a>
+        </div>
+    </main>
+
+    <footer class="bg-slate-950 p-3 text-center text-xs text-slate-600 border-t border-slate-800">
+        <span>© 2026 Black Box Central Hub. 騎車請注意安全。</span>
+    </footer>
+
+</body>
+</html>
