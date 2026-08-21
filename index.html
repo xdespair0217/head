@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>黑盒子數位觀測站 | Soros Journal Dashboard</title>
-<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;600;700&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;600;700&family=Noto+Sans+TC:wght@400;500;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
 <style>
   :root {
     --bg-dark: #121820;
@@ -17,6 +17,8 @@
     --text-muted: #9aa8b6;
     --border-color: #2a3847;
     --tag-bg: #23303e;
+    --pot-bg: #15191e;
+    --pot-yellow: #f1c40f;
   }
 
   * { box-sizing: border-box; }
@@ -209,52 +211,126 @@
     position: relative;
   }
 
-  /* Top Navbar */
+  /* ================= 集中式 PotPlayer 頂部導覽列 ================= */
   .top-navbar {
-    height: 60px;
-    background-color: var(--bg-panel);
-    border-bottom: 1px solid var(--border-color);
-    padding: 0 16px;
+    background-color: var(--pot-bg);
+    border-bottom: 1px solid #222831;
+    padding: 10px 20px;
     display: flex;
     justify-content: space-between;
     align-items: center;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.5);
   }
 
-  .audio-player-widget {
+  .pot-console {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    background: #101418;
+    border: 1px solid #252e3a;
+    padding: 6px 14px;
+    border-radius: 6px;
+  }
+
+  .pot-brand {
+    background: #252d37;
+    color: var(--pot-yellow);
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-weight: bold;
+    font-size: 7.5pt;
+    letter-spacing: 0.5px;
+  }
+
+  .pot-display {
     display: flex;
     align-items: center;
     gap: 10px;
-    background: #121820;
-    border: 1px solid var(--border-color);
-    padding: 4px 10px;
-    border-radius: 30px;
   }
 
-  .play-btn {
-    width: 28px;
-    height: 28px;
-    border-radius: 50%;
-    background: var(--accent);
-    border: none;
-    color: #121820;
+  .pot-time-big {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 15pt;
     font-weight: bold;
+    color: var(--pot-yellow);
+    letter-spacing: 1px;
+    line-height: 1;
+  }
+
+  /* 集中式等化器動畫 */
+  .pot-visualizer {
+    display: flex;
+    align-items: flex-end;
+    gap: 2px;
+    height: 20px;
+    padding: 0 4px;
+  }
+
+  .bar {
+    width: 3px;
+    background: #3498db;
+    height: 4px;
+    transition: height 0.1s ease;
+  }
+  .bar:nth-child(even) { background: var(--pot-yellow); }
+
+  .pot-controls {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .pot-btn {
+    background: #252d37;
+    border: 1px solid #3a4452;
+    color: #fff;
+    width: 26px;
+    height: 26px;
+    border-radius: 4px;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
+    font-size: 8.5pt;
+    transition: background 0.2s;
+  }
+  .pot-btn:hover { background: #344154; border-color: var(--pot-yellow); }
+
+  /* 黃色進度條與檔名字幕 */
+  .pot-track-box {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 220px;
   }
 
-  .audio-select {
-    background: #18222d;
-    color: var(--text-main);
-    border: 1px solid var(--border-color);
-    padding: 3px 6px;
-    border-radius: 4px;
+  .pot-filename {
     font-size: 8pt;
-    outline: none;
+    color: #a0aab5;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 240px;
   }
 
-  .action-buttons { display: flex; gap: 8px; }
+  .pot-progress-container {
+    width: 100%;
+    background: #2a3442;
+    height: 4px;
+    border-radius: 2px;
+    cursor: pointer;
+    position: relative;
+  }
+
+  .pot-progress-bar {
+    background: var(--pot-yellow);
+    height: 100%;
+    width: 0%;
+    border-radius: 2px;
+    position: relative;
+  }
+
+  .action-buttons { display: flex; gap: 8px; align-items: center; }
 
   .btn-external {
     background-color: var(--accent);
@@ -313,8 +389,8 @@
       width: 100%;
       position: absolute;
       left: 0;
-      top: 60px;
-      height: calc(100vh - 60px);
+      top: 64px;
+      height: calc(100vh - 64px);
       z-index: 20;
       transition: transform 0.3s ease;
     }
@@ -326,9 +402,9 @@
       top: 0;
       height: 100vh;
     }
-    .top-navbar { padding: 0 10px; justify-content: space-between; }
-    .audio-player-widget { padding: 3px 8px; gap: 6px; }
-    .audio-select { max-width: 110px; font-size: 7.5pt; }
+    .top-navbar { padding: 6px 10px; }
+    .pot-console { padding: 4px 8px; gap: 8px; }
+    .pot-track-box { display: none; } /* 手機版簡化空間 */
     .back-to-list-btn { display: inline-flex; align-items: center; gap: 3px; }
   }
 </style>
@@ -353,20 +429,42 @@
 
   <!-- RIGHT MAIN PANEL -->
   <div id="main-panel">
+    <!-- 集中式 PotPlayer 播放控制台 -->
     <div class="top-navbar">
-      <div style="display:flex; align-items:center; gap:8px;">
-        <button class="back-to-list-btn" id="backBtn" onclick="returnToList()">← 文章清單</button>
-        <div class="audio-player-widget">
-          <button class="play-btn" id="playBtn" onclick="toggleAudio()">▶</button>
-          <select id="bgmSelect" class="audio-select" onchange="changeMusic()">
-            <option value="https://www.image2url.com/r2/default/audio/1787326558036-d679f42e-b042-494d-87e1-feee736b1ea6.mp3">沉浸配樂 A01</option>
-          </select>
+      <div class="pot-console">
+        <span class="pot-brand">PotPlayer</span>
+        
+        <div class="pot-controls">
+          <button class="pot-btn" id="playBtn" onclick="toggleAudio()">▶</button>
+          <button class="pot-btn" onclick="stopAudio()">■</button>
+          <button class="back-to-list-btn" id="backBtn" onclick="returnToList()">← 清單</button>
+        </div>
+
+        <div class="pot-display">
+          <div class="pot-time-big" id="timeDisplay">00:00</div>
+          <!-- 頻譜動畫緊鄰時間碼 -->
+          <div class="pot-visualizer" id="visualizer">
+            <div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div>
+            <div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div>
+          </div>
+        </div>
+
+        <div class="pot-track-box">
+          <div class="pot-filename">宿醉.mp3 (黑盒子沉浸配樂)</div>
+          <div class="pot-progress-container" id="progressContainer" onclick="seekAudio(event)">
+            <div class="pot-progress-bar" id="progressBar"></div>
+          </div>
         </div>
       </div>
+
       <div class="action-buttons">
         <a href="#" id="openExternalPdf" target="_blank" class="btn-external">全螢幕 PDF ↗</a>
       </div>
     </div>
+
+    <!-- 隱藏式音訊物件 -->
+    <audio id="bgmAudio" src="https://www.image2url.com/r2/default/audio/1787326558036-d679f42e-b042-494d-87e1-feee736b1ea6.mp3" preload="auto" loop></audio>
+
     <div class="viewer-container" id="viewerContainer">
       <div class="placeholder-view">
         <h2>請從左側選擇一篇黑盒子手札</h2>
@@ -376,7 +474,6 @@
   </div>
 
 <script>
-  // 穩定的本地資料庫（對應你的 Excel 內容，以後每新增一篇直接在這裡加一行即可）
   const articles = [
     {
       date: "2026-08-21",
@@ -408,6 +505,9 @@
   let currentArticleIndex = null;
   const audio = document.getElementById('bgmAudio');
   const playBtn = document.getElementById('playBtn');
+  const timeDisplay = document.getElementById('timeDisplay');
+  const progressBar = document.getElementById('progressBar');
+  const bars = document.querySelectorAll('.bar');
 
   function initDashboard() {
     renderTags();
@@ -415,8 +515,56 @@
     if (articles.length > 0 && window.innerWidth > 768) {
       selectArticle(0);
     }
-    audio.src = document.getElementById('bgmSelect').value;
   }
+
+  function toggleAudio() {
+    if (audio.paused) {
+      audio.play().then(() => {
+        playBtn.innerText = "❚❚";
+      }).catch(e => {
+        console.log("播放遭到阻擋", e);
+      });
+    } else {
+      audio.pause();
+      playBtn.innerText = "▶";
+    }
+  }
+
+  function stopAudio() {
+    audio.pause();
+    audio.currentTime = 0;
+    playBtn.innerText = "▶";
+  }
+
+  audio.addEventListener('timeupdate', () => {
+    if (!isNaN(audio.duration)) {
+      const currentMinutes = Math.floor(audio.currentTime / 60);
+      const currentSeconds = Math.floor(audio.currentTime % 60);
+      timeDisplay.innerText = String(currentMinutes).padStart(2, '0') + ":" + String(currentSeconds).padStart(2, '0');
+      progressBar.style.width = ((audio.currentTime / audio.duration) * 100) + '%';
+    }
+  });
+
+  function seekAudio(event) {
+    const container = document.getElementById('progressContainer');
+    const rect = container.getBoundingClientRect();
+    const clickPosition = (event.clientX - rect.left) / rect.width;
+    if (!isNaN(audio.duration)) {
+      audio.currentTime = clickPosition * audio.duration;
+    }
+  }
+
+  // 頻譜跳動動畫（集中在時間碼旁邊）
+  setInterval(() => {
+    if (!audio.paused) {
+      bars.forEach(bar => {
+        const randomHeight = Math.floor(Math.random() * 16) + 3;
+        bar.style.height = randomHeight + 'px';
+      });
+    } else {
+      bars.forEach(bar => { bar.style.height = '4px'; });
+    }
+  }, 100);
 
   function renderTags() {
     const tagsSet = new Set();
@@ -491,22 +639,6 @@
   function returnToList() {
     document.getElementById('sidebar').classList.remove('mobile-hidden');
     document.getElementById('backBtn').style.display = 'none';
-  }
-
-  function toggleAudio() {
-    if (audio.paused) {
-      audio.play();
-      playBtn.innerText = "❚❚";
-    } else {
-      audio.pause();
-      playBtn.innerText = "▶";
-    }
-  }
-
-  function changeMusic() {
-    audio.src = document.getElementById('bgmSelect').value;
-    audio.play();
-    playBtn.innerText = "❚❚";
   }
 
   window.onload = initDashboard;
