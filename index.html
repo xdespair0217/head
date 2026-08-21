@@ -259,13 +259,16 @@
   }
   .play-btn:hover { transform: scale(1.05); }
 
-  .audio-info {
+  .audio-select {
+    background: #18222d;
+    color: var(--text-main);
+    border: 1px solid var(--border-color);
+    padding: 4px 10px;
+    border-radius: 4px;
     font-size: 8.5pt;
-    display: flex;
-    flex-direction: column;
+    outline: none;
+    cursor: pointer;
   }
-  .audio-title { font-weight: 600; color: var(--text-main); }
-  .audio-sub { font-size: 7.5pt; color: var(--text-muted); }
 
   .action-buttons {
     display: flex;
@@ -322,18 +325,16 @@
     <div class="sidebar-header">
       <div class="sidebar-title-row">
         <h1 class="sidebar-title">黑盒子數位觀測站</h1>
-        <span class="file-count-badge" id="countBadge">3 篇手札</span>
+        <span class="file-count-badge" id="countBadge">載入中...</span>
       </div>
       <div class="search-box">
         <span class="search-icon">🔍</span>
         <input type="text" class="search-input" id="searchInput" placeholder="搜尋手札標題、標籤或系列..." oninput="filterArticles()">
       </div>
-      <div class="tags-container" id="tagsContainer">
-        <!-- Tags injected by JS -->
-      </div>
+      <div class="tags-container" id="tagsContainer"></div>
     </div>
     <div class="card-list" id="cardList">
-      <!-- Cards injected by JS -->
+      <div style="text-align:center; color: var(--text-muted); padding: 40px 0;">正在從 Google 試算表同步資料...</div>
     </div>
   </div>
 
@@ -342,9 +343,11 @@
     <div class="top-navbar">
       <div class="audio-player-widget">
         <button class="play-btn" id="playBtn" onclick="toggleAudio()">▶</button>
-        <div class="audio-info">
-          <span class="audio-title" id="audioTitle">載入中...</span>
-          <span class="audio-sub">黑盒子沉浸配樂系統</span>
+        <div class="audio-info" style="display:flex; align-items:center; gap:8px;">
+          <span style="font-size:8pt; color:var(--text-muted);">選擇配樂：</span>
+          <select id="bgmSelect" class="audio-select" onchange="changeMusic()">
+            <option value="https://www.image2url.com/r2/default/audio/1787326558036-d679f42e-b042-494d-87e1-feee736b1ea6.mp3">沉浸配樂 A01 (預設)</option>
+          </select>
         </div>
         <audio id="bgmAudio" preload="auto"></audio>
       </div>
@@ -361,47 +364,82 @@
   </div>
 
 <script>
-  // 資料庫陣列（對應你的 Excel 結構，支援用「/」分隔自動產生多個標籤）
-  const articles = [
-    {
-      id: "H01",
-      date: "2026-04-12",
-      series: "黑盒子手札",
-      title: "時間的複利與真實的富有：一場關於快與慢的經濟學對話",
-      tags: ["經濟學", "松浦彌太郎", "哲學"],
-      audio: "https://www.image2url.com/r2/default/audio/1787326558036-d679f42e-b042-494d-87e1-feee736b1ea6.mp3",
-      pdf: "https://drive.google.com/file/d/1Fv2sWJn9AoTw4uIpaRDrN3RWaBur6dbx/preview",
-      rawPdf: "https://drive.google.com/file/d/1Fv2sWJn9AoTw4uIpaRDrN3RWaBur6dbx/view?usp=sharing",
-      status: "已發布"
-    },
-    {
-      id: "H02",
-      date: "2026-04-20",
-      series: "Isekai Waves",
-      title: "90s 復古電台與白日夢的虛擬共鳴",
-      tags: ["復古電台", "Lo-Fi", "意識流"],
-      audio: "https://www.image2url.com/r2/default/audio/1787326558036-d679f42e-b042-494d-87e1-feee736b1ea6.mp3",
-      pdf: "https://drive.google.com/file/d/sample_pdf_02/preview",
-      rawPdf: "#",
-      status: "草稿中"
-    },
-    {
-      id: "H03",
-      date: "2026-05-01",
-      series: "Pixel World",
-      title: "16-bit 像素世界探索：數位考古現場的解構",
-      tags: ["像素美學", "遊戲設計", "Elowen"],
-      audio: "https://www.image2url.com/r2/default/audio/1787326558036-d679f42e-b042-494d-87e1-feee736b1ea6.mp3",
-      pdf: "https://drive.google.com/file/d/sample_pdf_03/preview",
-      rawPdf: "#",
-      status: "籌備中"
-    }
-  ];
+  // 你的 Google 試算表公開發布 CSV 連結
+  const csvUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRLmLPE1te1EMSIyvi0K-iXyHy4YHBhOA8mpSQu_JVjCHx5h4ofw8eb8Hxb7u-S2mVHGUJiBT5Y4f0I/pub?output=csv";
 
+  let articles = [];
   let currentActiveTag = "全部";
   let currentArticleIndex = null;
   const audio = document.getElementById('bgmAudio');
   const playBtn = document.getElementById('playBtn');
+
+  // 自動讀取遠端 CSV 數據
+  async function loadSheetData() {
+    try {
+      const response = await fetch(csvUrl);
+      const data = await response.text();
+      parseCSV(data);
+    } catch (error) {
+      console.error("無法載入試算表資料：", error);
+      document.getElementById('cardList').innerHTML = `<div style="text-align:center; color: #ff6b6b; padding: 40px 0;">連線試算表失敗，請檢查網路或連結。</div>`;
+    }
+  }
+
+  // 解析 CSV 格式 (對應你的欄位：發布日期, 專案系列, 文章標題, 核心主題/標籤, Google Drive PDF 連結, 發布狀態)
+  function parseCSV(text) {
+    const lines = text.split("\n");
+    articles = [];
+    
+    // 從第 1 行開始 (跳過標題列 i=0)
+    for (let i = 1; i < lines.length; i++) {
+      const line = lines[i].trim();
+      if (!line) continue;
+      
+      // 簡易 CSV 欄位切割 (支援引號包覆)
+      const row = matchCSVRow(line);
+      if (row.length >= 6) {
+        const [date, series, title, rawTags, pdfLink, status] = row;
+        
+        // 如果狀態是已發布才載入 (或全部載入，這裡過濾空白)
+        if (title && title.trim() !== "") {
+          // 自動將標籤用斜線 / 拆開，並去除前後空白
+          const tagsArray = rawTags ? rawTags.split('/').map(t => t.trim()).filter(t => t !== "") : [];
+          
+          articles.push({
+            date: date.trim(),
+            series: series.trim(),
+            title: title.trim(),
+            tags: tagsArray,
+            pdf: pdfLink.trim(),
+            rawPdf: pdfLink.trim().replace('/preview', '/view?usp=sharing'),
+            status: status ? status.trim() : "已發布"
+          });
+        }
+      }
+    }
+
+    initDashboard();
+  }
+
+  // 輔助函式：解析帶引號的 CSV 行
+  function matchCSVRow(rowString) {
+    const result = [];
+    let cur = '';
+    let inQuote = false;
+    for (let i = 0; i < rowString.length; i++) {
+      const c = rowString[i];
+      if (c === '"') {
+        inQuote = !inQuote;
+      } else if (c === ',' && !inQuote) {
+        result.push(cur);
+        cur = '';
+      } else {
+        cur += c;
+      }
+    }
+    result.push(cur);
+    return result.map(item => item.replace(/^"|"$/g, '').trim());
+  }
 
   function initDashboard() {
     renderTags();
@@ -409,6 +447,7 @@
     if (articles.length > 0) {
       selectArticle(0);
     }
+    audio.src = document.getElementById('bgmSelect').value;
   }
 
   function renderTags() {
@@ -433,7 +472,7 @@
     }
 
     let html = '';
-    list.forEach((art, idx) => {
+    list.forEach((art) => {
       const globalIdx = articles.indexOf(art);
       const isSelected = globalIdx === currentArticleIndex;
       const tagBadges = art.tags.map(t => `<span class="card-tag-badge">${t}</span>`).join('');
@@ -478,13 +517,7 @@
 
     const viewer = document.getElementById('viewerContainer');
     viewer.innerHTML = `<iframe src="${art.pdf}" title="${art.title}"></iframe>`;
-    
     document.getElementById('openExternalPdf').href = art.rawPdf;
-
-    audio.src = art.audio;
-    document.getElementById('audioTitle').innerText = `${art.series} - 配樂`;
-    audio.pause();
-    playBtn.innerText = "▶";
   }
 
   function toggleAudio() {
@@ -497,7 +530,15 @@
     }
   }
 
-  window.onload = initDashboard;
+  function changeMusic() {
+    const selectedUrl = document.getElementById('bgmSelect').value;
+    audio.src = selectedUrl;
+    audio.play();
+    playBtn.innerText = "❚❚";
+  }
+
+  // 網頁載入時自動執行遠端同步
+  window.onload = loadSheetData;
 </script>
 </body>
 </html>
