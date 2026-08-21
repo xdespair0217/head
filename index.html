@@ -491,7 +491,7 @@
   </div>
 
 <script>
-  // 使用代理伺服器繞過 CORS 限制，讓前端能夠順利即時抓取你的 Google 試算表 CSV
+  // 使用正確的 Google 試算表公開 CSV 連結與安全代理伺服器
   const targetCsvUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRLmLPE1te1EMSIyvi0K-iXyHy4YHBhOA8mpSQu_JVjCHx5h4ofw8eb8Hxb7u-S2mVHGUJiBT5Y4f0I/pub?output=csv";
   const csvUrl = "https://api.allorigins.win/raw?url=" + encodeURIComponent(targetCsvUrl);
 
@@ -692,7 +692,6 @@
     }
   }, 100);
 
-  // 網頁一打開，自動去 Google 試算表抓最新資料
   window.onload = loadSheetData;
 </script>
 </body>
