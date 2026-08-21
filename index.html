@@ -1,136 +1,503 @@
 <!DOCTYPE html>
 <html lang="zh-TW">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Soros Central Hub</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-        /* 針對行動端微縮觸控優化 */
-        .active-tap:active {
-            transform: scale(0.98);
-            transition: transform 0.1s ease;
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>黑盒子數位觀測站 | Soros Journal Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;600;700&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg-dark: #121820;
+    --bg-panel: #18222d;
+    --bg-card: #1e2834;
+    --bg-card-hover: #263342;
+    --accent: #c89d66;
+    --accent-hover: #d9af7a;
+    --text-main: #f2eee9;
+    --text-muted: #9aa8b6;
+    --border-color: #2a3847;
+    --tag-bg: #23303e;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    padding: 0;
+    background-color: var(--bg-dark);
+    color: var(--text-main);
+    font-family: 'Noto Sans TC', sans-serif;
+    display: flex;
+    height: 100vh;
+    overflow: hidden;
+  }
+
+  /* Left Sidebar */
+  #sidebar {
+    width: 420px;
+    background-color: var(--bg-panel);
+    border-right: 1px solid var(--border-color);
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    box-shadow: 4px 0 15px rgba(0,0,0,0.3);
+    z-index: 10;
+  }
+
+  .sidebar-header {
+    padding: 20px 24px;
+    border-bottom: 1px solid var(--border-color);
+    background: linear-gradient(135deg, #18222d 0%, #1e2834 100%);
+  }
+
+  .sidebar-title-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+  }
+
+  .sidebar-title {
+    font-family: 'Noto Serif TC', serif;
+    font-size: 16pt;
+    font-weight: 700;
+    color: var(--accent);
+    margin: 0;
+    letter-spacing: 1px;
+  }
+
+  .file-count-badge {
+    background-color: var(--accent);
+    color: #121820;
+    font-size: 8.5pt;
+    font-weight: 700;
+    padding: 3px 10px;
+    border-radius: 12px;
+  }
+
+  /* Search Bar */
+  .search-box {
+    position: relative;
+    margin-bottom: 12px;
+  }
+
+  .search-input {
+    width: 100%;
+    background-color: #121820;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    padding: 10px 14px 10px 38px;
+    color: var(--text-main);
+    font-size: 9.5pt;
+    outline: none;
+    transition: all 0.3s;
+  }
+
+  .search-input:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 2px rgba(200, 157, 102, 0.15);
+  }
+
+  .search-icon {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-muted);
+    font-size: 11pt;
+  }
+
+  /* Tags Bar */
+  .tags-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    max-height: 80px;
+    overflow-y: auto;
+  }
+
+  .filter-tag {
+    background-color: var(--tag-bg);
+    border: 1px solid var(--border-color);
+    color: var(--text-muted);
+    font-size: 8pt;
+    padding: 4px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .filter-tag:hover, .filter-tag.active {
+    background-color: var(--accent);
+    color: #121820;
+    border-color: var(--accent);
+    font-weight: 600;
+  }
+
+  /* Card List */
+  .card-list {
+    flex: 1;
+    overflow-y: auto;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .article-card {
+    background-color: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 14px 16px;
+    cursor: pointer;
+    transition: all 0.25s;
+    position: relative;
+  }
+
+  .article-card:hover {
+    background-color: var(--bg-card-hover);
+    border-color: var(--accent);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  }
+
+  .article-card.active {
+    background-color: #233140;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 1px var(--accent);
+  }
+
+  .card-meta-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 6px;
+  }
+
+  .card-series {
+    font-size: 7.5pt;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--accent);
+    background: rgba(200, 157, 102, 0.1);
+    padding: 2px 6px;
+    border-radius: 3px;
+  }
+
+  .card-date {
+    font-size: 7.5pt;
+    color: var(--text-muted);
+  }
+
+  .card-title {
+    font-family: 'Noto Serif TC', serif;
+    font-size: 10.5pt;
+    font-weight: 600;
+    color: var(--text-main);
+    line-height: 1.4;
+    margin-bottom: 8px;
+  }
+
+  .card-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+  }
+
+  .card-tag-badge {
+    font-size: 7pt;
+    background: #121820;
+    color: var(--text-muted);
+    padding: 2px 6px;
+    border-radius: 3px;
+  }
+
+  /* Right Main Panel */
+  #main-panel {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    background-color: var(--bg-dark);
+  }
+
+  /* Top Audio & Navigation Bar */
+  .top-navbar {
+    height: 64px;
+    background-color: var(--bg-panel);
+    border-bottom: 1px solid var(--border-color);
+    padding: 0 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .audio-player-widget {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: #121820;
+    border: 1px solid var(--border-color);
+    padding: 6px 14px;
+    border-radius: 30px;
+  }
+
+  .play-btn {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: var(--accent);
+    border: none;
+    color: #121820;
+    font-weight: bold;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.2s;
+  }
+  .play-btn:hover { transform: scale(1.05); }
+
+  .audio-info {
+    font-size: 8.5pt;
+    display: flex;
+    flex-direction: column;
+  }
+  .audio-title { font-weight: 600; color: var(--text-main); }
+  .audio-sub { font-size: 7.5pt; color: var(--text-muted); }
+
+  .action-buttons {
+    display: flex;
+    gap: 12px;
+  }
+
+  .btn-external {
+    background-color: var(--accent);
+    color: #121820;
+    font-weight: 600;
+    font-size: 8.5pt;
+    padding: 8px 16px;
+    border-radius: 6px;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: background 0.2s;
+  }
+  .btn-external:hover { background-color: var(--accent-hover); }
+
+  /* PDF Viewer Area */
+  .viewer-container {
+    flex: 1;
+    padding: 20px;
+    background-color: #0d1218;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+  }
+
+  iframe {
+    width: 100%;
+    height: 100%;
+    border: none;
+    border-radius: 8px;
+    background: #ffffff;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.4);
+  }
+
+  .placeholder-view {
+    text-align: center;
+    color: var(--text-muted);
+    font-family: 'Noto Serif TC', serif;
+  }
+  .placeholder-view h2 { color: var(--accent); margin-bottom: 8px; }
+</style>
 </head>
-<body class="bg-slate-950 text-slate-100 font-sans min-h-screen flex flex-col justify-between selection:bg-cyan-500 selection:text-slate-900">
+<body>
 
-    <header class="bg-slate-900 border-b border-slate-800 p-5 sticky top-0 z-50 shadow-lg backdrop-blur-md bg-opacity-90">
-        <div class="max-w-6xl mx-auto flex justify-between items-center">
-            <div>
-                <h1 class="text-xl font-bold tracking-widest text-cyan-400">Soros Central Hub</h1>
-                <p class="text-[10px] text-slate-500 tracking-wider mt-0.5 uppercase">Digital Infrastructure & Observation</p>
-            </div>
-            <span class="text-xs bg-cyan-950 text-cyan-400 px-3 py-1 rounded-full border border-cyan-800/50 font-mono shadow-inner animate-pulse">
-                ONLINE
-            </span>
+  <!-- LEFT SIDEBAR -->
+  <div id="sidebar">
+    <div class="sidebar-header">
+      <div class="sidebar-title-row">
+        <h1 class="sidebar-title">黑盒子數位觀測站</h1>
+        <span class="file-count-badge" id="countBadge">3 篇手札</span>
+      </div>
+      <div class="search-box">
+        <span class="search-icon">🔍</span>
+        <input type="text" class="search-input" id="searchInput" placeholder="搜尋手札標題、標籤或系列..." oninput="filterArticles()">
+      </div>
+      <div class="tags-container" id="tagsContainer">
+        <!-- Tags injected by JS -->
+      </div>
+    </div>
+    <div class="card-list" id="cardList">
+      <!-- Cards injected by JS -->
+    </div>
+  </div>
+
+  <!-- RIGHT MAIN PANEL -->
+  <div id="main-panel">
+    <div class="top-navbar">
+      <div class="audio-player-widget">
+        <button class="play-btn" id="playBtn" onclick="toggleAudio()">▶</button>
+        <div class="audio-info">
+          <span class="audio-title" id="audioTitle">載入中...</span>
+          <span class="audio-sub">黑盒子沉浸配樂系統</span>
         </div>
-    </header>
+        <audio id="bgmAudio" preload="auto"></audio>
+      </div>
+      <div class="action-buttons">
+        <a href="#" id="openExternalPdf" target="_blank" class="btn-external">在新分頁開啟 PDF ↗</a>
+      </div>
+    </div>
+    <div class="viewer-container" id="viewerContainer">
+      <div class="placeholder-view">
+        <h2>請從左側選擇一篇黑盒子手札</h2>
+        <p>解構未知的真相，在虛實交錯中沉浸閱讀。</p>
+      </div>
+    </div>
+  </div>
 
-    <main class="flex-grow p-4 md:p-8 max-w-6xl mx-auto w-full flex flex-col justify-center">
-        
-        <div class="mb-6 bg-gradient-to-r from-slate-900 via-slate-900 to-cyan-950/30 p-4 rounded-xl border border-slate-800 shadow-xl">
-            <div class="flex items-center space-x-3">
-                <div class="w-2 h-2 rounded-full bg-cyan-400 shadow-[0_0_8px_#22d3ee]"></div>
-                <p class="text-xs text-slate-400 tracking-wide">
-                    中樞控制台已就緒。六大核心核心維度與現場流動狀態已完成同步，手機查閱專用。
-                </p>
-            </div>
+<script>
+  // 資料庫陣列（對應你的 Excel 結構，支援用「/」分隔自動產生多個標籤）
+  const articles = [
+    {
+      id: "H01",
+      date: "2026-04-12",
+      series: "黑盒子手札",
+      title: "時間的複利與真實的富有：一場關於快與慢的經濟學對話",
+      tags: ["經濟學", "松浦彌太郎", "哲學"],
+      audio: "https://www.image2url.com/r2/default/audio/1787326558036-d679f42e-b042-494d-87e1-feee736b1ea6.mp3",
+      pdf: "https://drive.google.com/file/d/1Fv2sWJn9AoTw4uIpaRDrN3RWaBur6dbx/preview",
+      rawPdf: "https://drive.google.com/file/d/1Fv2sWJn9AoTw4uIpaRDrN3RWaBur6dbx/view?usp=sharing",
+      status: "已發布"
+    },
+    {
+      id: "H02",
+      date: "2026-04-20",
+      series: "Isekai Waves",
+      title: "90s 復古電台與白日夢的虛擬共鳴",
+      tags: ["復古電台", "Lo-Fi", "意識流"],
+      audio: "https://www.image2url.com/r2/default/audio/1787326558036-d679f42e-b042-494d-87e1-feee736b1ea6.mp3",
+      pdf: "https://drive.google.com/file/d/sample_pdf_02/preview",
+      rawPdf: "#",
+      status: "草稿中"
+    },
+    {
+      id: "H03",
+      date: "2026-05-01",
+      series: "Pixel World",
+      title: "16-bit 像素世界探索：數位考古現場的解構",
+      tags: ["像素美學", "遊戲設計", "Elowen"],
+      audio: "https://www.image2url.com/r2/default/audio/1787326558036-d679f42e-b042-494d-87e1-feee736b1ea6.mp3",
+      pdf: "https://drive.google.com/file/d/sample_pdf_03/preview",
+      rawPdf: "#",
+      status: "籌備中"
+    }
+  ];
+
+  let currentActiveTag = "全部";
+  let currentArticleIndex = null;
+  const audio = document.getElementById('bgmAudio');
+  const playBtn = document.getElementById('playBtn');
+
+  function initDashboard() {
+    renderTags();
+    renderCards(articles);
+    if (articles.length > 0) {
+      selectArticle(0);
+    }
+  }
+
+  function renderTags() {
+    const tagsSet = new Set();
+    articles.forEach(a => a.tags.forEach(t => tagsSet.add(t)));
+    
+    let html = `<div class="filter-tag ${currentActiveTag === '全部' ? 'active' : ''}" onclick="filterByTag('全部')">全部 (${articles.length})</div>`;
+    tagsSet.forEach(tag => {
+      const count = articles.filter(a => a.tags.includes(tag)).length;
+      html += `<div class="filter-tag ${currentActiveTag === tag ? 'active' : ''}" onclick="filterByTag('${tag}')">${tag} (${count})</div>`;
+    });
+    document.getElementById('tagsContainer').innerHTML = html;
+  }
+
+  function renderCards(list) {
+    const cardList = document.getElementById('cardList');
+    document.getElementById('countBadge').innerText = `${list.length} 篇手札`;
+    
+    if (list.length === 0) {
+      cardList.innerHTML = `<div style="text-align:center; color: var(--text-muted); padding: 40px 0;">沒有找到符合條件的手札</div>`;
+      return;
+    }
+
+    let html = '';
+    list.forEach((art, idx) => {
+      const globalIdx = articles.indexOf(art);
+      const isSelected = globalIdx === currentArticleIndex;
+      const tagBadges = art.tags.map(t => `<span class="card-tag-badge">${t}</span>`).join('');
+      
+      html += `
+        <div class="article-card ${isSelected ? 'active' : ''}" onclick="selectArticle(${globalIdx})">
+          <div class="card-meta-row">
+            <span class="card-series">${art.series}</span>
+            <span class="card-date">${art.date}</span>
+          </div>
+          <div class="card-title">${art.title}</div>
+          <div class="card-tags">${tagBadges}</div>
         </div>
+      `;
+    });
+    cardList.innerHTML = html;
+  }
 
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
-            
-            <a href="https://script.google.com/macros/s/AKfycbztmbCrEtk0DZVIKSvFcfrAWTI_kie2Od6YDzo8HqEUHPjYAeZVcv0STi2kxnykrlQ7NQ/exec?mode=report" 
-               class="active-tap block bg-slate-900 hover:bg-slate-850 p-6 rounded-2xl border border-slate-800 hover:border-cyan-500/50 transition-all duration-300 shadow-md group">
-                <div class="flex justify-between items-start mb-4">
-                    <div class="p-3 bg-cyan-500/10 rounded-xl text-cyan-400 group-hover:bg-cyan-500/20 transition-colors">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                        </svg>
-                    </div>
-                    <span class="text-[10px] font-mono text-slate-500 bg-slate-950 px-2.5 py-1 rounded-md border border-slate-800">REPORT</span>
-                </div>
-                <h3 class="text-lg font-bold text-slate-200 mb-1.5 group-hover:text-cyan-400 transition-colors">廠區營運與歷史報告庫</h3>
-                <p class="text-xs text-slate-400 leading-relaxed">現有報告同步・手機查閱專用版。解構過往數據，提供嚴謹的決策推導基石。</p>
-            </a>
+  function filterByTag(tag) {
+    currentActiveTag = tag;
+    renderTags();
+    filterArticles();
+  }
 
-            <a href="https://script.google.com/macros/s/AKfycbztmbCrEtk0DZVIKSvFcfrAWTI_kie2Od6YDzo8HqEUHPjYAeZVcv0STi2kxnykrlQ7NQ/exec?mode=tech" 
-               class="active-tap block bg-slate-900 hover:bg-slate-850 p-6 rounded-2xl border border-slate-800 hover:border-emerald-500/50 transition-all duration-300 shadow-md group">
-                <div class="flex justify-between items-start mb-4">
-                    <div class="p-3 bg-emerald-500/10 rounded-xl text-emerald-400 group-hover:bg-emerald-500/20 transition-colors">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                        </svg>
-                    </div>
-                    <span class="text-[10px] font-mono text-slate-500 bg-slate-950 px-2.5 py-1 rounded-md border border-slate-800">TECH</span>
-                </div>
-                <h3 class="text-lg font-bold text-slate-200 mb-1.5 group-hover:text-emerald-400 transition-colors">廠區專案技術文件庫</h3>
-                <p class="text-xs text-slate-400 leading-relaxed">現有專案同步・手機查閱專用版。收納核心技術細節，如數位考古般嚴密留存。</p>
-            </a>
+  function filterArticles() {
+    const query = document.getElementById('searchInput').value.toLowerCase();
+    const filtered = articles.filter(art => {
+      const matchesTag = currentActiveTag === '全部' || art.tags.includes(currentActiveTag);
+      const matchesQuery = art.title.toLowerCase().includes(query) || 
+                           art.series.toLowerCase().includes(query) || 
+                           art.tags.some(t => t.toLowerCase().includes(query));
+      return matchesTag && matchesQuery;
+    });
+    renderCards(filtered);
+  }
 
-            <a href="https://script.google.com/macros/s/AKfycbwOPRG4oMPy-JWvioc4aF7aIF6M8XaR-s_ar0FjlhHiPzA-BXmEP3jeYEj7rqPJFzZ0/exec?v=phone" 
-               class="active-tap block bg-slate-900 hover:bg-slate-850 p-6 rounded-2xl border border-slate-800 hover:border-sky-500/50 transition-all duration-300 shadow-md group">
-                <div class="flex justify-between items-start mb-4">
-                    <div class="p-3 bg-sky-500/10 rounded-xl text-sky-400 group-hover:bg-sky-500/20 transition-colors">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path>
-                        </svg>
-                    </div>
-                    <span class="text-[10px] font-mono text-slate-500 bg-slate-950 px-2.5 py-1 rounded-md border border-slate-800">INSPECTION</span>
-                </div>
-                <h3 class="text-lg font-bold text-slate-200 mb-1.5 group-hover:text-sky-400 transition-colors">四樓鈑烤現場巡視面板</h3>
-                <p class="text-xs text-slate-400 leading-relaxed">現場進度與工藝稽核・行動端專用。即時追蹤作業動態，以嚴謹視角把關最終品相。</p>
-            </a>
+  function selectArticle(idx) {
+    currentArticleIndex = idx;
+    const art = articles[idx];
+    
+    filterArticles();
 
-            <a href="https://script.google.com/macros/s/AKfycbzMa_dSE63u7nX30kewJ52BNRyKS21Fl6v6VjWPGu-1oXlTlNrfC-2JOTkJ57eX5i4j/exec?page=archive_mobile" 
-               class="active-tap block bg-slate-900 hover:bg-slate-850 p-6 rounded-2xl border border-slate-800 hover:border-amber-500/50 transition-all duration-300 shadow-md group">
-                <div class="flex justify-between items-start mb-4">
-                    <div class="p-3 bg-amber-500/10 rounded-xl text-amber-400 group-hover:bg-amber-500/20 transition-colors">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
-                        </svg>
-                    </div>
-                    <span class="text-[10px] font-mono text-slate-500 bg-slate-950 px-2.5 py-1 rounded-md border border-slate-800">EXCEPTION</span>
-                </div>
-                <h3 class="text-lg font-bold text-slate-200 mb-1.5 group-hover:text-amber-400 transition-colors">RRR 特殊異常案件追蹤</h3>
-                <p class="text-xs text-slate-400 leading-relaxed">特殊個案動態追蹤・手機歸檔專用版。針對非標準化案件進行聚焦，剖析技術真相。</p>
-            </a>
+    const viewer = document.getElementById('viewerContainer');
+    viewer.innerHTML = `<iframe src="${art.pdf}" title="${art.title}"></iframe>`;
+    
+    document.getElementById('openExternalPdf').href = art.rawPdf;
 
-            <a href="https://script.google.com/macros/s/AKfycbzMa_dSE63u7nX30kewJ52BNRyKS21Fl6v6VjWPGu-1oXlTlNrfC-2JOTkJ57eX5i4j/exec?page=mobile" 
-               class="active-tap block bg-slate-900 hover:bg-slate-850 p-6 rounded-2xl border border-slate-800 hover:border-rose-500/50 transition-all duration-300 shadow-md group">
-                <div class="flex justify-between items-start mb-4">
-                    <div class="p-3 bg-rose-500/10 rounded-xl text-rose-400 group-hover:bg-rose-500/20 transition-colors">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                        </svg>
-                    </div>
-                    <span class="text-[10px] font-mono text-slate-500 bg-slate-950 px-2.5 py-1 rounded-md border border-slate-800">PENDING</span>
-                </div>
-                <h3 class="text-lg font-bold text-slate-200 mb-1.5 group-hover:text-rose-400 transition-colors">廠內待料與時效滯留監控</h3>
-                <p class="text-xs text-slate-400 leading-relaxed">即時待料狀態同步・行動端查閱專用。精準掌握物料滯留節點，化等待為制敵先機。</p>
-            </a>
+    audio.src = art.audio;
+    document.getElementById('audioTitle').innerText = `${art.series} - 配樂`;
+    audio.pause();
+    playBtn.innerText = "▶";
+  }
 
-            <a href="https://script.google.com/macros/s/AKfycbzFO_K9PIX93jvodqQ3Y4nV9NciU3h3Ek8t1hpyh4Vu3lfIn_gxtSqipCYqjvSg04Kc3w/exec" 
-               class="active-tap block bg-slate-900 hover:bg-slate-850 p-6 rounded-2xl border border-slate-800 hover:border-indigo-500/50 transition-all duration-300 shadow-md group">
-                <div class="flex justify-between items-start mb-4">
-                    <div class="p-3 bg-indigo-500/10 rounded-xl text-indigo-400 group-hover:bg-indigo-500/20 transition-colors">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
-                        </svg>
-                    </div>
-                    <span class="text-[10px] font-mono text-slate-500 bg-slate-950 px-2.5 py-1 rounded-md border border-slate-800">REAL-TIME</span>
-                </div>
-                <h3 class="text-lg font-bold text-slate-200 mb-1.5 group-hover:text-indigo-400 transition-colors">尚鵬內湖廠 考勤點名面板</h3>
-                <p class="text-xs text-slate-400 leading-relaxed">即時人員在位狀態、出勤紀錄與日常簽到轉接系統。精準掌握場域內的人流脈絡。</p>
-            </a>
+  function toggleAudio() {
+    if (audio.paused) {
+      audio.play();
+      playBtn.innerText = "❚❚";
+    } else {
+      audio.pause();
+      playBtn.innerText = "▶";
+    }
+  }
 
-        </div>
-    </main>
-
-    <footer class="bg-slate-950 p-4 text-center text-[11px] text-slate-600 border-t border-slate-900/80 tracking-widest font-mono">
-        © 2026 Soros Central Hub. All Rights Reserved.
-    </footer>
-
+  window.onload = initDashboard;
+</script>
 </body>
 </html>
