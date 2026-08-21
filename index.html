@@ -442,7 +442,7 @@
       <div class="tags-container" id="tagsContainer"></div>
     </div>
     <div class="card-list" id="cardList">
-      <div style="text-align:center; color: var(--text-muted); padding: 30px 0;">正在同步試算表資料...</div>
+      <div style="text-align:center; color: var(--text-muted); padding: 30px 0;">正在讀取 Google 試算表...</div>
     </div>
   </div>
 
@@ -491,9 +491,8 @@
   </div>
 
 <script>
-  // 使用正確的 Google 試算表公開 CSV 連結與安全代理伺服器
-  const targetCsvUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRLmLPE1te1EMSIyvi0K-iXyHy4YHBhOA8mpSQu_JVjCHx5h4ofw8eb8Hxb7u-S2mVHGUJiBT5Y4f0I/pub?output=csv";
-  const csvUrl = "https://api.allorigins.win/raw?url=" + encodeURIComponent(targetCsvUrl);
+  // 直接使用你的 Google 試算表公開發布 CSV 連結
+  const csvUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRLmLPE1te1EMSIyvi0K-iXyHy4YHBhOA8mpSQu_JVjCHx5h4ofw8eb8Hxb7u-S2mVHGUJiBT5Y4f0I/pub?output=csv";
 
   let articles = [];
   let currentActiveTag = "全部";
@@ -505,25 +504,26 @@
   const bars = document.querySelectorAll('.bar');
 
   async function loadSheetData() {
-    document.getElementById('cardList').innerHTML = `<div style="text-align:center; color: var(--text-muted); padding: 30px 0;">正在向 Google 請求最新資料...</div>`;
+    document.getElementById('cardList').innerHTML = `<div style="text-align:center; color: var(--text-muted); padding: 30px 0;">正在同步試算表...</div>`;
     try {
       const response = await fetch(csvUrl);
-      const data = await response.text();
-      parseCSV(data);
+      const text = await response.text();
+      parseCSV(text);
     } catch (error) {
       console.error("無法載入試算表：", error);
-      document.getElementById('cardList').innerHTML = `<div style="text-align:center; color: #ff6b6b; padding: 30px 0;">同步失敗，請點擊右上角重試</div>`;
+      document.getElementById('cardList').innerHTML = `<div style="text-align:center; color: #ff6b6b; padding: 30px 0;">連線失敗，請點擊右上角重試</div>`;
     }
   }
 
   function parseCSV(text) {
     const lines = text.split("\n");
     articles = [];
+    
     for (let i = 1; i < lines.length; i++) {
       const line = lines[i].trim();
       if (!line) continue;
-      const row = matchCSVRow(line);
       
+      const row = parseCSVRow(line);
       // 對應你的 6 個精簡欄位：
       // 0: 發布日期 (A), 1: 專案系列 (B), 2: 文章標題 (C), 3: 核心主題/標籤 (D), 4: Google Drive PDF (E), 5: 發布狀態 (F)
       if (row.length >= 6) {
@@ -545,18 +545,23 @@
     initDashboard();
   }
 
-  function matchCSVRow(rowString) {
-    const result = [];
-    let cur = '';
-    let inQuote = false;
-    for (let i = 0; i < rowString.length; i++) {
-      const c = rowString[i];
-      if (c === '"') { inQuote = !inQuote; }
-      else if (c === ',' && !inQuote) { result.push(cur); cur = ''; }
-      else { cur += c; }
+  function parseCSVRow(text) {
+    let result = [];
+    let current = '';
+    let inQuotes = false;
+    for (let i = 0; i < text.length; i++) {
+      let char = text[i];
+      if (char === '"') {
+        inQuotes = !inQuotes;
+      } else if (char === ',' && !inQuotes) {
+        result.push(current.trim().replace(/^"|"$/g, ''));
+        current = '';
+      } else {
+        current += char;
+      }
     }
-    result.push(cur);
-    return result.map(item => item.replace(/^"|"$/g, '').trim());
+    result.push(current.trim().replace(/^"|"$/g, ''));
+    return result;
   }
 
   function initDashboard() {
