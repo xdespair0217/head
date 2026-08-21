@@ -215,42 +215,43 @@
   .top-navbar {
     background-color: var(--pot-bg);
     border-bottom: 1px solid #222831;
-    padding: 10px 20px;
+    padding: 8px 16px;
     display: flex;
     justify-content: space-between;
     align-items: center;
     box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+    height: 54px; /* 固定高度確保不跑版 */
   }
 
   .pot-console {
     display: flex;
     align-items: center;
-    gap: 16px;
+    gap: 12px;
     background: #101418;
     border: 1px solid #252e3a;
-    padding: 6px 14px;
+    padding: 4px 10px;
     border-radius: 6px;
   }
 
   .pot-brand {
     background: #252d37;
     color: var(--pot-yellow);
-    padding: 2px 6px;
+    padding: 2px 5px;
     border-radius: 3px;
     font-weight: bold;
-    font-size: 7.5pt;
+    font-size: 7pt;
     letter-spacing: 0.5px;
   }
 
   .pot-display {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 8px;
   }
 
   .pot-time-big {
     font-family: 'Share Tech Mono', monospace;
-    font-size: 15pt;
+    font-size: 13pt;
     font-weight: bold;
     color: var(--pot-yellow);
     letter-spacing: 1px;
@@ -262,12 +263,12 @@
     display: flex;
     align-items: flex-end;
     gap: 2px;
-    height: 20px;
-    padding: 0 4px;
+    height: 16px;
+    padding: 0 2px;
   }
 
   .bar {
-    width: 3px;
+    width: 2.5px;
     background: #3498db;
     height: 4px;
     transition: height 0.1s ease;
@@ -277,21 +278,21 @@
   .pot-controls {
     display: flex;
     align-items: center;
-    gap: 6px;
+    gap: 4px;
   }
 
   .pot-btn {
     background: #252d37;
     border: 1px solid #3a4452;
     color: #fff;
-    width: 26px;
-    height: 26px;
+    width: 24px;
+    height: 24px;
     border-radius: 4px;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 8.5pt;
+    font-size: 8pt;
     transition: background 0.2s;
   }
   .pot-btn:hover { background: #344154; border-color: var(--pot-yellow); }
@@ -300,23 +301,23 @@
   .pot-track-box {
     display: flex;
     flex-direction: column;
-    gap: 4px;
-    min-width: 220px;
+    gap: 3px;
+    min-width: 180px;
   }
 
   .pot-filename {
-    font-size: 8pt;
+    font-size: 7.5pt;
     color: #a0aab5;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    max-width: 240px;
+    max-width: 180px;
   }
 
   .pot-progress-container {
     width: 100%;
     background: #2a3442;
-    height: 4px;
+    height: 3px;
     border-radius: 2px;
     cursor: pointer;
     position: relative;
@@ -336,13 +337,13 @@
     background-color: var(--accent);
     color: #121820;
     font-weight: 600;
-    font-size: 8pt;
-    padding: 6px 12px;
+    font-size: 7.5pt;
+    padding: 5px 10px;
     border-radius: 4px;
     text-decoration: none;
     display: inline-flex;
     align-items: center;
-    gap: 4px;
+    gap: 3px;
   }
 
   .back-to-list-btn {
@@ -350,9 +351,9 @@
     background: var(--border-color);
     color: var(--text-main);
     border: none;
-    padding: 6px 12px;
+    padding: 5px 10px;
     border-radius: 4px;
-    font-size: 8pt;
+    font-size: 7.5pt;
     cursor: pointer;
     font-weight: 600;
   }
@@ -383,18 +384,35 @@
   }
   .placeholder-view h2 { color: var(--accent); margin-bottom: 6px; font-size: 13pt; }
 
+  /* 手機版精簡與防遮擋適配 */
   @media (max-width: 768px) {
     body { position: relative; }
+    
+    .top-navbar {
+      height: 54px;
+      padding: 4px 8px;
+    }
+
+    .pot-console {
+      gap: 8px;
+      padding: 3px 6px;
+    }
+
+    /* 手機版隱藏檔名與進度條，騰出空間給播放鍵與頻譜 */
+    .pot-track-box { display: none; } 
+
     #sidebar {
       width: 100%;
       position: absolute;
       left: 0;
-      top: 64px;
-      height: calc(100vh - 64px);
+      top: 54px; /* 精準對齊導覽列高度，絕不擋住 */
+      height: calc(100vh - 54px);
       z-index: 20;
       transition: transform 0.3s ease;
     }
+
     #sidebar.mobile-hidden { transform: translateX(-100%); }
+
     #main-panel {
       width: 100%;
       position: absolute;
@@ -402,9 +420,7 @@
       top: 0;
       height: 100vh;
     }
-    .top-navbar { padding: 6px 10px; }
-    .pot-console { padding: 4px 8px; gap: 8px; }
-    .pot-track-box { display: none; } /* 手機版簡化空間 */
+
     .back-to-list-btn { display: inline-flex; align-items: center; gap: 3px; }
   }
 </style>
@@ -442,7 +458,7 @@
 
         <div class="pot-display">
           <div class="pot-time-big" id="timeDisplay">00:00</div>
-          <!-- 頻譜動畫緊鄰時間碼 -->
+          <!-- 頻譜跳動動畫 -->
           <div class="pot-visualizer" id="visualizer">
             <div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div>
             <div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div>
@@ -554,11 +570,10 @@
     }
   }
 
-  // 頻譜跳動動畫（集中在時間碼旁邊）
   setInterval(() => {
     if (!audio.paused) {
       bars.forEach(bar => {
-        const randomHeight = Math.floor(Math.random() * 16) + 3;
+        const randomHeight = Math.floor(Math.random() * 14) + 3;
         bar.style.height = randomHeight + 'px';
       });
     } else {
