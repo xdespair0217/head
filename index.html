@@ -220,13 +220,13 @@
     justify-content: space-between;
     align-items: center;
     box-shadow: 0 4px 12px rgba(0,0,0,0.5);
-    height: 54px; /* 固定高度確保不跑版 */
+    height: 54px;
   }
 
   .pot-console {
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 10px;
     background: #101418;
     border: 1px solid #252e3a;
     padding: 4px 10px;
@@ -258,7 +258,6 @@
     line-height: 1;
   }
 
-  /* 集中式等化器動畫 */
   .pot-visualizer {
     display: flex;
     align-items: flex-end;
@@ -297,12 +296,11 @@
   }
   .pot-btn:hover { background: #344154; border-color: var(--pot-yellow); }
 
-  /* 黃色進度條與檔名字幕 */
   .pot-track-box {
     display: flex;
     flex-direction: column;
     gap: 3px;
-    min-width: 180px;
+    min-width: 160px;
   }
 
   .pot-filename {
@@ -311,7 +309,7 @@
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    max-width: 180px;
+    max-width: 160px;
   }
 
   .pot-progress-container {
@@ -333,6 +331,23 @@
 
   .action-buttons { display: flex; gap: 8px; align-items: center; }
 
+  .btn-action {
+    background-color: var(--border-color);
+    color: var(--text-main);
+    font-weight: 600;
+    font-size: 7.5pt;
+    padding: 5px 10px;
+    border-radius: 4px;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    cursor: pointer;
+    border: none;
+    transition: background 0.2s;
+  }
+  .btn-action:hover { background-color: #384658; }
+
   .btn-external {
     background-color: var(--accent);
     color: #121820;
@@ -343,8 +358,9 @@
     text-decoration: none;
     display: inline-flex;
     align-items: center;
-    gap: 3px;
+    gap: 4px;
   }
+  .btn-external:hover { background-color: var(--accent-hover); }
 
   .back-to-list-btn {
     display: none;
@@ -384,35 +400,21 @@
   }
   .placeholder-view h2 { color: var(--accent); margin-bottom: 6px; font-size: 13pt; }
 
-  /* 手機版精簡與防遮擋適配 */
   @media (max-width: 768px) {
     body { position: relative; }
-    
-    .top-navbar {
-      height: 54px;
-      padding: 4px 8px;
-    }
-
-    .pot-console {
-      gap: 8px;
-      padding: 3px 6px;
-    }
-
-    /* 手機版隱藏檔名與進度條，騰出空間給播放鍵與頻譜 */
-    .pot-track-box { display: none; } 
-
+    .top-navbar { height: 54px; padding: 4px 8px; }
+    .pot-console { gap: 6px; padding: 3px 6px; }
+    .pot-track-box { display: none; }
     #sidebar {
       width: 100%;
       position: absolute;
       left: 0;
-      top: 54px; /* 精準對齊導覽列高度，絕不擋住 */
+      top: 54px;
       height: calc(100vh - 54px);
       z-index: 20;
       transition: transform 0.3s ease;
     }
-
     #sidebar.mobile-hidden { transform: translateX(-100%); }
-
     #main-panel {
       width: 100%;
       position: absolute;
@@ -420,7 +422,6 @@
       top: 0;
       height: 100vh;
     }
-
     .back-to-list-btn { display: inline-flex; align-items: center; gap: 3px; }
   }
 </style>
@@ -445,7 +446,7 @@
 
   <!-- RIGHT MAIN PANEL -->
   <div id="main-panel">
-    <!-- 集中式 PotPlayer 播放控制台 -->
+    <!-- PotPlayer 播放控制台與功能按鈕 -->
     <div class="top-navbar">
       <div class="pot-console">
         <span class="pot-brand">PotPlayer</span>
@@ -474,6 +475,8 @@
       </div>
 
       <div class="action-buttons">
+        <!-- 手動重整按鈕 -->
+        <button class="btn-action" onclick="location.reload()">🔄 重整</button>
         <a href="#" id="openExternalPdf" target="_blank" class="btn-external">全螢幕 PDF ↗</a>
       </div>
     </div>
