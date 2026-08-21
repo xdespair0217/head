@@ -269,7 +269,6 @@
     gap: 4px;
   }
 
-  /* Mobile Back Button (Hidden on Desktop) */
   .back-to-list-btn {
     display: none;
     background: var(--border-color);
@@ -308,10 +307,8 @@
   }
   .placeholder-view h2 { color: var(--accent); margin-bottom: 6px; font-size: 13pt; }
 
-  /* ================= RESPONSIVE MOBILE VIEW ================= */
   @media (max-width: 768px) {
     body { position: relative; }
-    
     #sidebar {
       width: 100%;
       position: absolute;
@@ -321,11 +318,7 @@
       z-index: 20;
       transition: transform 0.3s ease;
     }
-
-    #sidebar.mobile-hidden {
-      transform: translateX(-100%);
-    }
-
+    #sidebar.mobile-hidden { transform: translateX(-100%); }
     #main-panel {
       width: 100%;
       position: absolute;
@@ -333,20 +326,10 @@
       top: 0;
       height: 100vh;
     }
-
-    .top-navbar {
-      padding: 0 10px;
-      justify-content: space-between;
-    }
-
+    .top-navbar { padding: 0 10px; justify-content: space-between; }
     .audio-player-widget { padding: 3px 8px; gap: 6px; }
     .audio-select { max-width: 110px; font-size: 7.5pt; }
-
-    .back-to-list-btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 3px;
-    }
+    .back-to-list-btn { display: inline-flex; align-items: center; gap: 3px; }
   }
 </style>
 </head>
@@ -365,9 +348,7 @@
       </div>
       <div class="tags-container" id="tagsContainer"></div>
     </div>
-    <div class="card-list" id="cardList">
-      <div style="text-align:center; color: var(--text-muted); padding: 30px 0;">正在同步試算表...</div>
-    </div>
+    <div class="card-list" id="cardList"></div>
   </div>
 
   <!-- RIGHT MAIN PANEL -->
@@ -395,64 +376,38 @@
   </div>
 
 <script>
-  const csvUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRLmLPE1te1EMSIyvi0K-iXyHy4YHBhOA8mpSQu_JVjCHx5h4ofw8eb8Hxb7u-S2mVHGUJiBT5Y4f0I/pub?output=csv";
+  // 穩定的本地資料庫（對應你的 Excel 內容，以後每新增一篇直接在這裡加一行即可）
+  const articles = [
+    {
+      date: "2026-08-21",
+      series: "黑盒子手札",
+      title: "【黑盒子手札】時間的複利與真實的富有：一場關於快與慢的經濟學對話",
+      tags: ["經濟學", "松浦彌太郎"],
+      pdf: "https://drive.google.com/file/d/1Fv2sWJn9AoTw4uIpaRDrN3RWaBur6dbx/preview",
+      rawPdf: "https://drive.google.com/file/d/1Fv2sWJn9AoTw4uIpaRDrN3RWaBur6dbx/view?usp=sharing"
+    },
+    {
+      date: "2026-04-20",
+      series: "Isekai Waves",
+      title: "90s 復古電台與白日夢的虛擬共鳴",
+      tags: ["復古電台", "Lo-Fi"],
+      pdf: "https://drive.google.com/file/d/sample_pdf_02/preview",
+      rawPdf: "#"
+    },
+    {
+      date: "2026-05-01",
+      series: "Pixel World",
+      title: "16-bit 像素世界探索：數位考古現場的解構",
+      tags: ["像素美學", "遊戲設計"],
+      pdf: "https://drive.google.com/file/d/sample_pdf_03/preview",
+      rawPdf: "#"
+    }
+  ];
 
-  let articles = [];
   let currentActiveTag = "全部";
   let currentArticleIndex = null;
   const audio = document.getElementById('bgmAudio');
   const playBtn = document.getElementById('playBtn');
-
-  async function loadSheetData() {
-    try {
-      const response = await fetch(csvUrl);
-      const data = await response.text();
-      parseCSV(data);
-    } catch (error) {
-      console.error("無法載入試算表：", error);
-      document.getElementById('cardList').innerHTML = `<div style="text-align:center; color: #ff6b6b; padding: 30px 0;">連線試算表失敗</div>`;
-    }
-  }
-
-  function parseCSV(text) {
-    const lines = text.split("\n");
-    articles = [];
-    for (let i = 1; i < lines.length; i++) {
-      const line = lines[i].trim();
-      if (!line) continue;
-      const row = matchCSVRow(line);
-      if (row.length >= 6) {
-        const [date, series, title, rawTags, pdfLink, status] = row;
-        if (title && title.trim() !== "") {
-          const tagsArray = rawTags ? rawTags.split('/').map(t => t.trim()).filter(t => t !== "") : [];
-          articles.push({
-            date: date.trim(),
-            series: series.trim(),
-            title: title.trim(),
-            tags: tagsArray,
-            pdf: pdfLink.trim(),
-            rawPdf: pdfLink.trim().replace('/preview', '/view?usp=sharing'),
-            status: status ? status.trim() : "已發布"
-          });
-        }
-      }
-    }
-    initDashboard();
-  }
-
-  function matchCSVRow(rowString) {
-    const result = [];
-    let cur = '';
-    let inQuote = false;
-    for (let i = 0; i < rowString.length; i++) {
-      const c = rowString[i];
-      if (c === '"') { inQuote = !inQuote; }
-      else if (c === ',' && !inQuote) { result.push(cur); cur = ''; }
-      else { cur += c; }
-    }
-    result.push(cur);
-    return result.map(item => item.replace(/^"|"$/g, '').trim());
-  }
 
   function initDashboard() {
     renderTags();
@@ -527,7 +482,6 @@
     viewer.innerHTML = `<iframe src="${art.pdf}" title="${art.title}"></iframe>`;
     document.getElementById('openExternalPdf').href = art.rawPdf;
 
-    // 手機版點選文章後，自動隱藏左側清單，讓右側 PDF 滿版呈現
     if (window.innerWidth <= 768) {
       document.getElementById('sidebar').classList.add('mobile-hidden');
       document.getElementById('backBtn').style.display = 'inline-flex';
@@ -555,7 +509,7 @@
     playBtn.innerText = "❚❚";
   }
 
-  window.onload = loadSheetData;
+  window.onload = initDashboard;
 </script>
 </body>
 </html>
