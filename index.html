@@ -211,7 +211,7 @@
     position: relative;
   }
 
-  /* ================= 集中式 PotPlayer 頂部導覽列 ================= */
+  /* ================= PotPlayer 頂部導覽列 ================= */
   .top-navbar {
     background-color: var(--pot-bg);
     border-bottom: 1px solid #222831;
@@ -433,7 +433,7 @@
     <div class="sidebar-header">
       <div class="sidebar-title-row">
         <h1 class="sidebar-title">黑盒子數位觀測站</h1>
-        <span class="file-count-badge" id="countBadge">載入中...</span>
+        <span class="file-count-badge" id="countBadge">同步中...</span>
       </div>
       <div class="search-box">
         <span class="search-icon">🔍</span>
@@ -441,12 +441,13 @@
       </div>
       <div class="tags-container" id="tagsContainer"></div>
     </div>
-    <div class="card-list" id="cardList"></div>
+    <div class="card-list" id="cardList">
+      <div style="text-align:center; color: var(--text-muted); padding: 30px 0;">正在同步試算表資料...</div>
+    </div>
   </div>
 
   <!-- RIGHT MAIN PANEL -->
   <div id="main-panel">
-    <!-- PotPlayer 播放控制台與功能按鈕 -->
     <div class="top-navbar">
       <div class="pot-console">
         <span class="pot-brand">PotPlayer</span>
@@ -459,7 +460,6 @@
 
         <div class="pot-display">
           <div class="pot-time-big" id="timeDisplay">00:00</div>
-          <!-- 頻譜跳動動畫 -->
           <div class="pot-visualizer" id="visualizer">
             <div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div>
             <div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div>
@@ -475,13 +475,11 @@
       </div>
 
       <div class="action-buttons">
-        <!-- 手動重整按鈕 -->
-        <button class="btn-action" onclick="location.reload()">🔄 重整</button>
+        <button class="btn-action" onclick="loadSheetData()">🔄 同步</button>
         <a href="#" id="openExternalPdf" target="_blank" class="btn-external">全螢幕 PDF ↗</a>
       </div>
     </div>
 
-    <!-- 隱藏式音訊物件 -->
     <audio id="bgmAudio" src="https://www.image2url.com/r2/default/audio/1787326558036-d679f42e-b042-494d-87e1-feee736b1ea6.mp3" preload="auto" loop></audio>
 
     <div class="viewer-container" id="viewerContainer">
@@ -493,33 +491,11 @@
   </div>
 
 <script>
-  const articles = [
-    {
-      date: "2026-08-21",
-      series: "黑盒子手札",
-      title: "【黑盒子手札】時間的複利與真實的富有：一場關於快與慢的經濟學對話",
-      tags: ["經濟學", "松浦彌太郎"],
-      pdf: "https://drive.google.com/file/d/1Fv2sWJn9AoTw4uIpaRDrN3RWaBur6dbx/preview",
-      rawPdf: "https://drive.google.com/file/d/1Fv2sWJn9AoTw4uIpaRDrN3RWaBur6dbx/view?usp=sharing"
-    },
-    {
-      date: "2026-04-20",
-      series: "Isekai Waves",
-      title: "90s 復古電台與白日夢的虛擬共鳴",
-      tags: ["復古電台", "Lo-Fi"],
-      pdf: "https://drive.google.com/file/d/sample_pdf_02/preview",
-      rawPdf: "#"
-    },
-    {
-      date: "2026-05-01",
-      series: "Pixel World",
-      title: "16-bit 像素世界探索：數位考古現場的解構",
-      tags: ["像素美學", "遊戲設計"],
-      pdf: "https://drive.google.com/file/d/sample_pdf_03/preview",
-      rawPdf: "#"
-    }
-  ];
+  // 使用代理伺服器繞過 CORS 限制，讓前端能夠順利即時抓取你的 Google 試算表 CSV
+  const targetCsvUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRLmLPE1te1EMSIyvi0K-iXyHy4YHBhOA8mpSQu_JVjCHx5h4ofw8eb8Hxb7u-S2mVHGUJiBT5Y4f0I/pub?output=csv";
+  const csvUrl = "https://api.allorigins.win/raw?url=" + encodeURIComponent(targetCsvUrl);
 
+  let articles = [];
   let currentActiveTag = "全部";
   let currentArticleIndex = null;
   const audio = document.getElementById('bgmAudio');
@@ -528,61 +504,70 @@
   const progressBar = document.getElementById('progressBar');
   const bars = document.querySelectorAll('.bar');
 
+  async function loadSheetData() {
+    document.getElementById('cardList').innerHTML = `<div style="text-align:center; color: var(--text-muted); padding: 30px 0;">正在向 Google 請求最新資料...</div>`;
+    try {
+      const response = await fetch(csvUrl);
+      const data = await response.text();
+      parseCSV(data);
+    } catch (error) {
+      console.error("無法載入試算表：", error);
+      document.getElementById('cardList').innerHTML = `<div style="text-align:center; color: #ff6b6b; padding: 30px 0;">同步失敗，請點擊右上角重試</div>`;
+    }
+  }
+
+  function parseCSV(text) {
+    const lines = text.split("\n");
+    articles = [];
+    for (let i = 1; i < lines.length; i++) {
+      const line = lines[i].trim();
+      if (!line) continue;
+      const row = matchCSVRow(line);
+      
+      // 對應你的 6 個精簡欄位：
+      // 0: 發布日期 (A), 1: 專案系列 (B), 2: 文章標題 (C), 3: 核心主題/標籤 (D), 4: Google Drive PDF (E), 5: 發布狀態 (F)
+      if (row.length >= 6) {
+        const [date, series, title, rawTags, pdfLink, status] = row;
+        if (title && title.trim() !== "") {
+          const tagsArray = rawTags ? rawTags.split('/').map(t => t.trim()).filter(t => t !== "") : [];
+          articles.push({
+            date: date.trim(),
+            series: series.trim(),
+            title: title.trim(),
+            tags: tagsArray,
+            pdf: pdfLink.trim(),
+            rawPdf: pdfLink.trim().replace('/preview', '/view?usp=sharing'),
+            status: status ? status.trim() : "已發布"
+          });
+        }
+      }
+    }
+    initDashboard();
+  }
+
+  function matchCSVRow(rowString) {
+    const result = [];
+    let cur = '';
+    let inQuote = false;
+    for (let i = 0; i < rowString.length; i++) {
+      const c = rowString[i];
+      if (c === '"') { inQuote = !inQuote; }
+      else if (c === ',' && !inQuote) { result.push(cur); cur = ''; }
+      else { cur += c; }
+    }
+    result.push(cur);
+    return result.map(item => item.replace(/^"|"$/g, '').trim());
+  }
+
   function initDashboard() {
     renderTags();
     renderCards(articles);
-    if (articles.length > 0 && window.innerWidth > 768) {
+    if (articles.length > 0 && window.innerWidth > 768 && currentArticleIndex === null) {
       selectArticle(0);
+    } else if (articles.length > 0 && currentArticleIndex !== null) {
+      renderCards(articles);
     }
   }
-
-  function toggleAudio() {
-    if (audio.paused) {
-      audio.play().then(() => {
-        playBtn.innerText = "❚❚";
-      }).catch(e => {
-        console.log("播放遭到阻擋", e);
-      });
-    } else {
-      audio.pause();
-      playBtn.innerText = "▶";
-    }
-  }
-
-  function stopAudio() {
-    audio.pause();
-    audio.currentTime = 0;
-    playBtn.innerText = "▶";
-  }
-
-  audio.addEventListener('timeupdate', () => {
-    if (!isNaN(audio.duration)) {
-      const currentMinutes = Math.floor(audio.currentTime / 60);
-      const currentSeconds = Math.floor(audio.currentTime % 60);
-      timeDisplay.innerText = String(currentMinutes).padStart(2, '0') + ":" + String(currentSeconds).padStart(2, '0');
-      progressBar.style.width = ((audio.currentTime / audio.duration) * 100) + '%';
-    }
-  });
-
-  function seekAudio(event) {
-    const container = document.getElementById('progressContainer');
-    const rect = container.getBoundingClientRect();
-    const clickPosition = (event.clientX - rect.left) / rect.width;
-    if (!isNaN(audio.duration)) {
-      audio.currentTime = clickPosition * audio.duration;
-    }
-  }
-
-  setInterval(() => {
-    if (!audio.paused) {
-      bars.forEach(bar => {
-        const randomHeight = Math.floor(Math.random() * 14) + 3;
-        bar.style.height = randomHeight + 'px';
-      });
-    } else {
-      bars.forEach(bar => { bar.style.height = '4px'; });
-    }
-  }, 100);
 
   function renderTags() {
     const tagsSet = new Set();
@@ -659,7 +644,56 @@
     document.getElementById('backBtn').style.display = 'none';
   }
 
-  window.onload = initDashboard;
+  function toggleAudio() {
+    if (audio.paused) {
+      audio.play().then(() => {
+        playBtn.innerText = "❚❚";
+      }).catch(e => {
+        console.log("播放遭到阻擋", e);
+      });
+    } else {
+      audio.pause();
+      playBtn.innerText = "▶";
+    }
+  }
+
+  function stopAudio() {
+    audio.pause();
+    audio.currentTime = 0;
+    playBtn.innerText = "▶";
+  }
+
+  audio.addEventListener('timeupdate', () => {
+    if (!isNaN(audio.duration)) {
+      const currentMinutes = Math.floor(audio.currentTime / 60);
+      const currentSeconds = Math.floor(audio.currentTime % 60);
+      timeDisplay.innerText = String(currentMinutes).padStart(2, '0') + ":" + String(currentSeconds).padStart(2, '0');
+      progressBar.style.width = ((audio.currentTime / audio.duration) * 100) + '%';
+    }
+  });
+
+  function seekAudio(event) {
+    const container = document.getElementById('progressContainer');
+    const rect = container.getBoundingClientRect();
+    const clickPosition = (event.clientX - rect.left) / rect.width;
+    if (!isNaN(audio.duration)) {
+      audio.currentTime = clickPosition * audio.duration;
+    }
+  }
+
+  setInterval(() => {
+    if (!audio.paused) {
+      bars.forEach(bar => {
+        const randomHeight = Math.floor(Math.random() * 14) + 3;
+        bar.style.height = randomHeight + 'px';
+      });
+    } else {
+      bars.forEach(bar => { bar.style.height = '4px'; });
+    }
+  }, 100);
+
+  // 網頁一打開，自動去 Google 試算表抓最新資料
+  window.onload = loadSheetData;
 </script>
 </body>
 </html>
