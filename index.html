@@ -2,7 +2,7 @@
 <html lang="zh-TW">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>黑盒子數位觀測站 | Soros Journal Dashboard</title>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;600;700&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
@@ -42,10 +42,11 @@
     height: 100vh;
     box-shadow: 4px 0 15px rgba(0,0,0,0.3);
     z-index: 10;
+    transition: transform 0.3s ease;
   }
 
   .sidebar-header {
-    padding: 20px 24px;
+    padding: 16px 20px;
     border-bottom: 1px solid var(--border-color);
     background: linear-gradient(135deg, #18222d 0%, #1e2834 100%);
   }
@@ -54,12 +55,12 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 12px;
+    margin-bottom: 10px;
   }
 
   .sidebar-title {
     font-family: 'Noto Serif TC', serif;
-    font-size: 16pt;
+    font-size: 14pt;
     font-weight: 700;
     color: var(--accent);
     margin: 0;
@@ -69,16 +70,16 @@
   .file-count-badge {
     background-color: var(--accent);
     color: #121820;
-    font-size: 8.5pt;
+    font-size: 8pt;
     font-weight: 700;
-    padding: 3px 10px;
+    padding: 3px 8px;
     border-radius: 12px;
   }
 
   /* Search Bar */
   .search-box {
     position: relative;
-    margin-bottom: 12px;
+    margin-bottom: 10px;
   }
 
   .search-input {
@@ -86,33 +87,29 @@
     background-color: #121820;
     border: 1px solid var(--border-color);
     border-radius: 6px;
-    padding: 10px 14px 10px 38px;
+    padding: 8px 12px 8px 34px;
     color: var(--text-main);
-    font-size: 9.5pt;
+    font-size: 9pt;
     outline: none;
-    transition: all 0.3s;
   }
 
-  .search-input:focus {
-    border-color: var(--accent);
-    box-shadow: 0 0 0 2px rgba(200, 157, 102, 0.15);
-  }
+  .search-input:focus { border-color: var(--accent); }
 
   .search-icon {
     position: absolute;
-    left: 12px;
+    left: 10px;
     top: 50%;
     transform: translateY(-50%);
     color: var(--text-muted);
-    font-size: 11pt;
+    font-size: 10pt;
   }
 
   /* Tags Bar */
   .tags-container {
     display: flex;
     flex-wrap: wrap;
-    gap: 6px;
-    max-height: 80px;
+    gap: 5px;
+    max-height: 70px;
     overflow-y: auto;
   }
 
@@ -120,8 +117,8 @@
     background-color: var(--tag-bg);
     border: 1px solid var(--border-color);
     color: var(--text-muted);
-    font-size: 8pt;
-    padding: 4px 10px;
+    font-size: 7.5pt;
+    padding: 3px 8px;
     border-radius: 4px;
     cursor: pointer;
     transition: all 0.2s;
@@ -138,29 +135,22 @@
   .card-list {
     flex: 1;
     overflow-y: auto;
-    padding: 16px;
+    padding: 12px;
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 10px;
   }
 
   .article-card {
     background-color: var(--bg-card);
     border: 1px solid var(--border-color);
-    border-radius: 8px;
-    padding: 14px 16px;
+    border-radius: 6px;
+    padding: 12px;
     cursor: pointer;
-    transition: all 0.25s;
-    position: relative;
+    transition: all 0.2s;
   }
 
-  .article-card:hover {
-    background-color: var(--bg-card-hover);
-    border-color: var(--accent);
-    transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-  }
-
+  .article-card:hover { border-color: var(--accent); }
   .article-card.active {
     background-color: #233140;
     border-color: var(--accent);
@@ -171,45 +161,41 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 6px;
+    margin-bottom: 4px;
   }
 
   .card-series {
-    font-size: 7.5pt;
+    font-size: 7pt;
     font-weight: 700;
     text-transform: uppercase;
-    letter-spacing: 1px;
     color: var(--accent);
     background: rgba(200, 157, 102, 0.1);
-    padding: 2px 6px;
+    padding: 2px 5px;
     border-radius: 3px;
   }
 
-  .card-date {
-    font-size: 7.5pt;
-    color: var(--text-muted);
-  }
+  .card-date { font-size: 7pt; color: var(--text-muted); }
 
   .card-title {
     font-family: 'Noto Serif TC', serif;
-    font-size: 10.5pt;
+    font-size: 10pt;
     font-weight: 600;
     color: var(--text-main);
-    line-height: 1.4;
-    margin-bottom: 8px;
+    line-height: 1.35;
   }
 
   .card-tags {
     display: flex;
     flex-wrap: wrap;
-    gap: 4px;
+    gap: 3px;
+    margin-top: 6px;
   }
 
   .card-tag-badge {
-    font-size: 7pt;
+    font-size: 6.5pt;
     background: #121820;
     color: var(--text-muted);
-    padding: 2px 6px;
+    padding: 1px 5px;
     border-radius: 3px;
   }
 
@@ -220,14 +206,15 @@
     flex-direction: column;
     height: 100vh;
     background-color: var(--bg-dark);
+    position: relative;
   }
 
-  /* Top Audio & Navigation Bar */
+  /* Top Navbar */
   .top-navbar {
-    height: 64px;
+    height: 60px;
     background-color: var(--bg-panel);
     border-bottom: 1px solid var(--border-color);
-    padding: 0 24px;
+    padding: 0 16px;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -236,16 +223,16 @@
   .audio-player-widget {
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 10px;
     background: #121820;
     border: 1px solid var(--border-color);
-    padding: 6px 14px;
+    padding: 4px 10px;
     border-radius: 30px;
   }
 
   .play-btn {
-    width: 32px;
-    height: 32px;
+    width: 28px;
+    height: 28px;
     border-radius: 50%;
     background: var(--accent);
     border: none;
@@ -255,59 +242,63 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: transform 0.2s;
   }
-  .play-btn:hover { transform: scale(1.05); }
 
   .audio-select {
     background: #18222d;
     color: var(--text-main);
     border: 1px solid var(--border-color);
-    padding: 4px 10px;
+    padding: 3px 6px;
     border-radius: 4px;
-    font-size: 8.5pt;
+    font-size: 8pt;
     outline: none;
-    cursor: pointer;
   }
 
-  .action-buttons {
-    display: flex;
-    gap: 12px;
-  }
+  .action-buttons { display: flex; gap: 8px; }
 
   .btn-external {
     background-color: var(--accent);
     color: #121820;
     font-weight: 600;
-    font-size: 8.5pt;
-    padding: 8px 16px;
-    border-radius: 6px;
+    font-size: 8pt;
+    padding: 6px 12px;
+    border-radius: 4px;
     text-decoration: none;
     display: inline-flex;
     align-items: center;
-    gap: 6px;
-    transition: background 0.2s;
+    gap: 4px;
   }
-  .btn-external:hover { background-color: var(--accent-hover); }
+
+  /* Mobile Back Button (Hidden on Desktop) */
+  .back-to-list-btn {
+    display: none;
+    background: var(--border-color);
+    color: var(--text-main);
+    border: none;
+    padding: 6px 12px;
+    border-radius: 4px;
+    font-size: 8pt;
+    cursor: pointer;
+    font-weight: 600;
+  }
 
   /* PDF Viewer Area */
   .viewer-container {
     flex: 1;
-    padding: 20px;
+    padding: 16px;
     background-color: #0d1218;
     display: flex;
     justify-content: center;
     align-items: center;
-    position: relative;
   }
 
   iframe {
     width: 100%;
     height: 100%;
     border: none;
-    border-radius: 8px;
+    border-radius: 6px;
     background: #ffffff;
-    box-shadow: 0 8px 30px rgba(0,0,0,0.4);
+    box-shadow: 0 4px 20px rgba(0,0,0,0.4);
   }
 
   .placeholder-view {
@@ -315,7 +306,48 @@
     color: var(--text-muted);
     font-family: 'Noto Serif TC', serif;
   }
-  .placeholder-view h2 { color: var(--accent); margin-bottom: 8px; }
+  .placeholder-view h2 { color: var(--accent); margin-bottom: 6px; font-size: 13pt; }
+
+  /* ================= RESPONSIVE MOBILE VIEW ================= */
+  @media (max-width: 768px) {
+    body { position: relative; }
+    
+    #sidebar {
+      width: 100%;
+      position: absolute;
+      left: 0;
+      top: 60px;
+      height: calc(100vh - 60px);
+      z-index: 20;
+      transition: transform 0.3s ease;
+    }
+
+    #sidebar.mobile-hidden {
+      transform: translateX(-100%);
+    }
+
+    #main-panel {
+      width: 100%;
+      position: absolute;
+      left: 0;
+      top: 0;
+      height: 100vh;
+    }
+
+    .top-navbar {
+      padding: 0 10px;
+      justify-content: space-between;
+    }
+
+    .audio-player-widget { padding: 3px 8px; gap: 6px; }
+    .audio-select { max-width: 110px; font-size: 7.5pt; }
+
+    .back-to-list-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+    }
+  }
 </style>
 </head>
 <body>
@@ -329,30 +361,29 @@
       </div>
       <div class="search-box">
         <span class="search-icon">🔍</span>
-        <input type="text" class="search-input" id="searchInput" placeholder="搜尋手札標題、標籤或系列..." oninput="filterArticles()">
+        <input type="text" class="search-input" id="searchInput" placeholder="搜尋手札..." oninput="filterArticles()">
       </div>
       <div class="tags-container" id="tagsContainer"></div>
     </div>
     <div class="card-list" id="cardList">
-      <div style="text-align:center; color: var(--text-muted); padding: 40px 0;">正在從 Google 試算表同步資料...</div>
+      <div style="text-align:center; color: var(--text-muted); padding: 30px 0;">正在同步試算表...</div>
     </div>
   </div>
 
   <!-- RIGHT MAIN PANEL -->
   <div id="main-panel">
     <div class="top-navbar">
-      <div class="audio-player-widget">
-        <button class="play-btn" id="playBtn" onclick="toggleAudio()">▶</button>
-        <div class="audio-info" style="display:flex; align-items:center; gap:8px;">
-          <span style="font-size:8pt; color:var(--text-muted);">選擇配樂：</span>
+      <div style="display:flex; align-items:center; gap:8px;">
+        <button class="back-to-list-btn" id="backBtn" onclick="returnToList()">← 文章清單</button>
+        <div class="audio-player-widget">
+          <button class="play-btn" id="playBtn" onclick="toggleAudio()">▶</button>
           <select id="bgmSelect" class="audio-select" onchange="changeMusic()">
-            <option value="https://www.image2url.com/r2/default/audio/1787326558036-d679f42e-b042-494d-87e1-feee736b1ea6.mp3">沉浸配樂 A01 (預設)</option>
+            <option value="https://www.image2url.com/r2/default/audio/1787326558036-d679f42e-b042-494d-87e1-feee736b1ea6.mp3">沉浸配樂 A01</option>
           </select>
         </div>
-        <audio id="bgmAudio" preload="auto"></audio>
       </div>
       <div class="action-buttons">
-        <a href="#" id="openExternalPdf" target="_blank" class="btn-external">在新分頁開啟 PDF ↗</a>
+        <a href="#" id="openExternalPdf" target="_blank" class="btn-external">全螢幕 PDF ↗</a>
       </div>
     </div>
     <div class="viewer-container" id="viewerContainer">
@@ -364,7 +395,6 @@
   </div>
 
 <script>
-  // 你的 Google 試算表公開發布 CSV 連結
   const csvUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRLmLPE1te1EMSIyvi0K-iXyHy4YHBhOA8mpSQu_JVjCHx5h4ofw8eb8Hxb7u-S2mVHGUJiBT5Y4f0I/pub?output=csv";
 
   let articles = [];
@@ -373,38 +403,28 @@
   const audio = document.getElementById('bgmAudio');
   const playBtn = document.getElementById('playBtn');
 
-  // 自動讀取遠端 CSV 數據
   async function loadSheetData() {
     try {
       const response = await fetch(csvUrl);
       const data = await response.text();
       parseCSV(data);
     } catch (error) {
-      console.error("無法載入試算表資料：", error);
-      document.getElementById('cardList').innerHTML = `<div style="text-align:center; color: #ff6b6b; padding: 40px 0;">連線試算表失敗，請檢查網路或連結。</div>`;
+      console.error("無法載入試算表：", error);
+      document.getElementById('cardList').innerHTML = `<div style="text-align:center; color: #ff6b6b; padding: 30px 0;">連線試算表失敗</div>`;
     }
   }
 
-  // 解析 CSV 格式 (對應你的欄位：發布日期, 專案系列, 文章標題, 核心主題/標籤, Google Drive PDF 連結, 發布狀態)
   function parseCSV(text) {
     const lines = text.split("\n");
     articles = [];
-    
-    // 從第 1 行開始 (跳過標題列 i=0)
     for (let i = 1; i < lines.length; i++) {
       const line = lines[i].trim();
       if (!line) continue;
-      
-      // 簡易 CSV 欄位切割 (支援引號包覆)
       const row = matchCSVRow(line);
       if (row.length >= 6) {
         const [date, series, title, rawTags, pdfLink, status] = row;
-        
-        // 如果狀態是已發布才載入 (或全部載入，這裡過濾空白)
         if (title && title.trim() !== "") {
-          // 自動將標籤用斜線 / 拆開，並去除前後空白
           const tagsArray = rawTags ? rawTags.split('/').map(t => t.trim()).filter(t => t !== "") : [];
-          
           articles.push({
             date: date.trim(),
             series: series.trim(),
@@ -417,25 +437,18 @@
         }
       }
     }
-
     initDashboard();
   }
 
-  // 輔助函式：解析帶引號的 CSV 行
   function matchCSVRow(rowString) {
     const result = [];
     let cur = '';
     let inQuote = false;
     for (let i = 0; i < rowString.length; i++) {
       const c = rowString[i];
-      if (c === '"') {
-        inQuote = !inQuote;
-      } else if (c === ',' && !inQuote) {
-        result.push(cur);
-        cur = '';
-      } else {
-        cur += c;
-      }
+      if (c === '"') { inQuote = !inQuote; }
+      else if (c === ',' && !inQuote) { result.push(cur); cur = ''; }
+      else { cur += c; }
     }
     result.push(cur);
     return result.map(item => item.replace(/^"|"$/g, '').trim());
@@ -444,7 +457,7 @@
   function initDashboard() {
     renderTags();
     renderCards(articles);
-    if (articles.length > 0) {
+    if (articles.length > 0 && window.innerWidth > 768) {
       selectArticle(0);
     }
     audio.src = document.getElementById('bgmSelect').value;
@@ -453,7 +466,6 @@
   function renderTags() {
     const tagsSet = new Set();
     articles.forEach(a => a.tags.forEach(t => tagsSet.add(t)));
-    
     let html = `<div class="filter-tag ${currentActiveTag === '全部' ? 'active' : ''}" onclick="filterByTag('全部')">全部 (${articles.length})</div>`;
     tagsSet.forEach(tag => {
       const count = articles.filter(a => a.tags.includes(tag)).length;
@@ -464,19 +476,16 @@
 
   function renderCards(list) {
     const cardList = document.getElementById('cardList');
-    document.getElementById('countBadge').innerText = `${list.length} 篇手札`;
-    
+    document.getElementById('countBadge').innerText = `${list.length} 篇`;
     if (list.length === 0) {
-      cardList.innerHTML = `<div style="text-align:center; color: var(--text-muted); padding: 40px 0;">沒有找到符合條件的手札</div>`;
+      cardList.innerHTML = `<div style="text-align:center; color: var(--text-muted); padding: 30px 0;">沒有找到手札</div>`;
       return;
     }
-
     let html = '';
     list.forEach((art) => {
       const globalIdx = articles.indexOf(art);
       const isSelected = globalIdx === currentArticleIndex;
       const tagBadges = art.tags.map(t => `<span class="card-tag-badge">${t}</span>`).join('');
-      
       html += `
         <div class="article-card ${isSelected ? 'active' : ''}" onclick="selectArticle(${globalIdx})">
           <div class="card-meta-row">
@@ -512,12 +521,22 @@
   function selectArticle(idx) {
     currentArticleIndex = idx;
     const art = articles[idx];
-    
     filterArticles();
 
     const viewer = document.getElementById('viewerContainer');
     viewer.innerHTML = `<iframe src="${art.pdf}" title="${art.title}"></iframe>`;
     document.getElementById('openExternalPdf').href = art.rawPdf;
+
+    // 手機版點選文章後，自動隱藏左側清單，讓右側 PDF 滿版呈現
+    if (window.innerWidth <= 768) {
+      document.getElementById('sidebar').classList.add('mobile-hidden');
+      document.getElementById('backBtn').style.display = 'inline-flex';
+    }
+  }
+
+  function returnToList() {
+    document.getElementById('sidebar').classList.remove('mobile-hidden');
+    document.getElementById('backBtn').style.display = 'none';
   }
 
   function toggleAudio() {
@@ -531,13 +550,11 @@
   }
 
   function changeMusic() {
-    const selectedUrl = document.getElementById('bgmSelect').value;
-    audio.src = selectedUrl;
+    audio.src = document.getElementById('bgmSelect').value;
     audio.play();
     playBtn.innerText = "❚❚";
   }
 
-  // 網頁載入時自動執行遠端同步
   window.onload = loadSheetData;
 </script>
 </body>
