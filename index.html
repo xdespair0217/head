@@ -363,18 +363,19 @@
   }
   .btn-external:hover { background-color: var(--accent-hover); }
 
-  .mobile-close-btn {
+  /* 返回清單按鈕（手機版閱讀時顯示） */
+  .back-to-list-btn {
     display: none;
-    background-color: #ff5252;
-    color: #ffffff;
-    font-weight: 700;
-    font-size: 8pt;
+    background: var(--border-color);
+    color: var(--text-main);
+    border: none;
     padding: 5px 10px;
     border-radius: 4px;
-    border: none;
+    font-size: 7.5pt;
     cursor: pointer;
+    font-weight: 600;
     align-items: center;
-    gap: 4px;
+    gap: 3px;
   }
 
   /* PDF Viewer Area */
@@ -429,10 +430,6 @@
       height: 100vh;
       z-index: 5;
     }
-
-    .mobile-close-btn {
-      display: inline-flex;
-    }
   }
 </style>
 </head>
@@ -465,6 +462,8 @@
         <div class="pot-controls">
           <button class="pot-btn" id="playBtn" onclick="toggleAudio()">▶</button>
           <button class="pot-btn" onclick="stopAudio()">■</button>
+          <!-- 返回清單按鈕 -->
+          <button class="back-to-list-btn" id="backBtn" onclick="returnToList()">← 清單</button>
         </div>
 
         <div class="pot-display">
@@ -484,7 +483,6 @@
       </div>
 
       <div class="action-buttons">
-        <button class="mobile-close-btn" id="closePdfBtn" onclick="returnToList()">✕ 關閉 PDF</button>
         <button class="btn-action" onclick="loadSheetData()">🔄 同步</button>
         <a href="#" id="openExternalPdf" target="_blank" class="btn-external">全螢幕 PDF ↗</a>
       </div>
@@ -574,7 +572,6 @@
   function initDashboard() {
     renderTags();
     renderCards(articles);
-    // 電腦版初始不強制預載第一篇，改為非同步選取或等待點擊，避免一開始就塞入 iframe 造成阻塞
   }
 
   function renderTags() {
@@ -632,7 +629,7 @@
     renderCards(filtered);
   }
 
-  // 非同步轉場：點擊時才掛載 iframe，確保記憶體與主執行緒絕對不卡死
+  // 非同步轉場：防止瞬間渲染卡死
   function selectArticle(idx) {
     currentArticleIndex = idx;
     const art = articles[idx];
@@ -646,14 +643,13 @@
 
     if (window.innerWidth <= 768) {
       document.getElementById('sidebar').classList.add('mobile-hidden');
-      document.getElementById('closePdfBtn').style.display = 'inline-flex';
+      document.getElementById('backBtn').style.display = 'inline-flex';
     }
   }
 
   function returnToList() {
     document.getElementById('sidebar').classList.remove('mobile-hidden');
-    document.getElementById('closePdfBtn').style.display = 'none';
-    // 釋放 iframe 記憶體，防止手機瀏覽器因背景渲染累積而卡死
+    document.getElementById('backBtn').style.display = 'none';
     document.getElementById('viewerContainer').innerHTML = `
       <div class="placeholder-view">
         <h2>請從左側選擇一篇黑盒子手札</h2>
