@@ -211,7 +211,7 @@
     position: relative;
   }
 
-  /* ================= PotPlayer 頂部導覽列 ================= */
+  /* ================= 頂部導覽列 ================= */
   .top-navbar {
     background-color: var(--pot-bg);
     border-bottom: 1px solid #222831;
@@ -330,19 +330,15 @@
     position: relative;
   }
 
-  .action-buttons { display: flex; gap: 8px; align-items: center; }
+  .action-buttons { display: flex; gap: 6px; align-items: center; }
 
   .btn-action {
     background-color: var(--border-color);
     color: var(--text-main);
     font-weight: 600;
     font-size: 7.5pt;
-    padding: 5px 10px;
+    padding: 5px 8px;
     border-radius: 4px;
-    text-decoration: none;
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
     cursor: pointer;
     border: none;
     transition: background 0.2s;
@@ -354,22 +350,20 @@
     color: #121820;
     font-weight: 600;
     font-size: 7.5pt;
-    padding: 5px 10px;
+    padding: 5px 8px;
     border-radius: 4px;
     text-decoration: none;
     display: inline-flex;
     align-items: center;
-    gap: 4px;
+    gap: 3px;
   }
-  .btn-external:hover { background-color: var(--accent-hover); }
 
-  /* 返回清單按鈕（手機版閱讀時顯示） */
   .back-to-list-btn {
     display: none;
     background: var(--border-color);
     color: var(--text-main);
     border: none;
-    padding: 5px 10px;
+    padding: 5px 8px;
     border-radius: 4px;
     font-size: 7.5pt;
     cursor: pointer;
@@ -407,16 +401,40 @@
 
   @media (max-width: 768px) {
     body { position: relative; }
-    .top-navbar { height: 54px; padding: 4px 8px; }
-    .pot-console { gap: 6px; padding: 3px 6px; }
-    .pot-track-box { display: none; }
     
+    .top-navbar { 
+      height: 50px; 
+      padding: 4px 6px; 
+    }
+
+    .pot-console { 
+      gap: 6px; 
+      padding: 2px 6px; 
+    }
+
+    .pot-brand, .pot-track-box { 
+      display: none; 
+    }
+
+    .pot-time-big { 
+      font-size: 11.5pt; 
+    }
+
+    .action-buttons { 
+      gap: 4px; 
+    }
+
+    .btn-action, .btn-external, .back-to-list-btn {
+      font-size: 7pt;
+      padding: 4px 6px;
+    }
+
     #sidebar {
       width: 100%;
       position: absolute;
       left: 0;
-      top: 54px;
-      height: calc(100vh - 54px);
+      top: 50px;
+      height: calc(100vh - 50px);
       z-index: 20;
       transition: transform 0.3s ease;
     }
@@ -462,7 +480,6 @@
         <div class="pot-controls">
           <button class="pot-btn" id="playBtn" onclick="toggleAudio()">▶</button>
           <button class="pot-btn" onclick="stopAudio()">■</button>
-          <!-- 返回清單按鈕 -->
           <button class="back-to-list-btn" id="backBtn" onclick="returnToList()">← 清單</button>
         </div>
 
@@ -629,17 +646,19 @@
     renderCards(filtered);
   }
 
-  // 非同步轉場：防止瞬間渲染卡死
+  // 強化版非同步轉場：每次點擊前先徹底清空舊 iframe 記憶體，絕不卡死
   function selectArticle(idx) {
     currentArticleIndex = idx;
     const art = articles[idx];
     filterArticles();
 
+    const viewer = document.getElementById('viewerContainer');
+    viewer.innerHTML = ''; // 徹底銷毀舊的 iframe
+
     setTimeout(() => {
-      const viewer = document.getElementById('viewerContainer');
       viewer.innerHTML = `<iframe src="${art.pdf}" title="${art.title}"></iframe>`;
       document.getElementById('openExternalPdf').href = art.rawPdf;
-    }, 10);
+    }, 20);
 
     if (window.innerWidth <= 768) {
       document.getElementById('sidebar').classList.add('mobile-hidden');
@@ -650,12 +669,18 @@
   function returnToList() {
     document.getElementById('sidebar').classList.remove('mobile-hidden');
     document.getElementById('backBtn').style.display = 'none';
-    document.getElementById('viewerContainer').innerHTML = `
-      <div class="placeholder-view">
-        <h2>請從左側選擇一篇黑盒子手札</h2>
-        <p>解構未知的真相，在虛實交錯中沉浸閱讀。</p>
-      </div>
-    `;
+    
+    const viewer = document.getElementById('viewerContainer');
+    viewer.innerHTML = ''; // 徹底釋放 iframe 記憶體
+    setTimeout(() => {
+      viewer.innerHTML = `
+        <div class="placeholder-view">
+          <h2>請從左側選擇一篇黑盒子手札</h2>
+          <p>解構未知的真相，在虛實交錯中沉浸閱讀。</p>
+        </div>
+      `;
+    }, 10);
+
     currentArticleIndex = null;
     renderCards(articles);
   }
