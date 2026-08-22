@@ -221,6 +221,7 @@
     align-items: center;
     box-shadow: 0 4px 12px rgba(0,0,0,0.5);
     height: 54px;
+    z-index: 30;
   }
 
   .pot-console {
@@ -362,16 +363,18 @@
   }
   .btn-external:hover { background-color: var(--accent-hover); }
 
-  .back-to-list-btn {
+  .mobile-close-btn {
     display: none;
-    background: var(--border-color);
-    color: var(--text-main);
-    border: none;
+    background-color: #ff5252;
+    color: #ffffff;
+    font-weight: 700;
+    font-size: 8pt;
     padding: 5px 10px;
     border-radius: 4px;
-    font-size: 7.5pt;
+    border: none;
     cursor: pointer;
-    font-weight: 600;
+    align-items: center;
+    gap: 4px;
   }
 
   /* PDF Viewer Area */
@@ -382,6 +385,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    position: relative;
   }
 
   iframe {
@@ -405,6 +409,7 @@
     .top-navbar { height: 54px; padding: 4px 8px; }
     .pot-console { gap: 6px; padding: 3px 6px; }
     .pot-track-box { display: none; }
+    
     #sidebar {
       width: 100%;
       position: absolute;
@@ -415,14 +420,19 @@
       transition: transform 0.3s ease;
     }
     #sidebar.mobile-hidden { transform: translateX(-100%); }
+
     #main-panel {
       width: 100%;
       position: absolute;
       left: 0;
       top: 0;
       height: 100vh;
+      z-index: 5;
     }
-    .back-to-list-btn { display: inline-flex; align-items: center; gap: 3px; }
+
+    .mobile-close-btn {
+      display: inline-flex;
+    }
   }
 </style>
 </head>
@@ -442,7 +452,7 @@
       <div class="tags-container" id="tagsContainer"></div>
     </div>
     <div class="card-list" id="cardList">
-      <div style="text-align:center; color: var(--text-muted); padding: 30px 0;">正在讀取 Google 試算表...</div>
+      <div style="text-align:center; color: var(--text-muted); padding: 30px 0;">正在同步試算表...</div>
     </div>
   </div>
 
@@ -455,7 +465,6 @@
         <div class="pot-controls">
           <button class="pot-btn" id="playBtn" onclick="toggleAudio()">▶</button>
           <button class="pot-btn" onclick="stopAudio()">■</button>
-          <button class="back-to-list-btn" id="backBtn" onclick="returnToList()">← 清單</button>
         </div>
 
         <div class="pot-display">
@@ -475,6 +484,7 @@
       </div>
 
       <div class="action-buttons">
+        <button class="mobile-close-btn" id="closePdfBtn" onclick="returnToList()">✕ 關閉 PDF</button>
         <button class="btn-action" onclick="loadSheetData()">🔄 同步</button>
         <a href="#" id="openExternalPdf" target="_blank" class="btn-external">全螢幕 PDF ↗</a>
       </div>
@@ -491,7 +501,6 @@
   </div>
 
 <script>
-  // 直接使用你的 Google 試算表公開發布 CSV 連結
   const csvUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRLmLPE1te1EMSIyvi0K-iXyHy4YHBhOA8mpSQu_JVjCHx5h4ofw8eb8Hxb7u-S2mVHGUJiBT5Y4f0I/pub?output=csv";
 
   let articles = [];
@@ -511,7 +520,7 @@
       parseCSV(text);
     } catch (error) {
       console.error("無法載入試算表：", error);
-      document.getElementById('cardList').innerHTML = `<div style="text-align:center; color: #ff6b6b; padding: 30px 0;">連線失敗，請點擊右上角重試</div>`;
+      document.getElementById('cardList').innerHTML = `<div style="text-align:center; color: #ff6b6b; padding: 30px 0;">連線失敗，請點擊同步重試</div>`;
     }
   }
 
@@ -524,8 +533,6 @@
       if (!line) continue;
       
       const row = parseCSVRow(line);
-      // 對應你的 6 個精簡欄位：
-      // 0: 發布日期 (A), 1: 專案系列 (B), 2: 文章標題 (C), 3: 核心主題/標籤 (D), 4: Google Drive PDF (E), 5: 發布狀態 (F)
       if (row.length >= 6) {
         const [date, series, title, rawTags, pdfLink, status] = row;
         if (title && title.trim() !== "") {
@@ -567,11 +574,7 @@
   function initDashboard() {
     renderTags();
     renderCards(articles);
-    if (articles.length > 0 && window.innerWidth > 768 && currentArticleIndex === null) {
-      selectArticle(0);
-    } else if (articles.length > 0 && currentArticleIndex !== null) {
-      renderCards(articles);
-    }
+    // 電腦版初始不強制預載第一篇，改為非同步選取或等待點擊，避免一開始就塞入 iframe 造成阻塞
   }
 
   function renderTags() {
@@ -629,24 +632,36 @@
     renderCards(filtered);
   }
 
+  // 非同步轉場：點擊時才掛載 iframe，確保記憶體與主執行緒絕對不卡死
   function selectArticle(idx) {
     currentArticleIndex = idx;
     const art = articles[idx];
     filterArticles();
 
-    const viewer = document.getElementById('viewerContainer');
-    viewer.innerHTML = `<iframe src="${art.pdf}" title="${art.title}"></iframe>`;
-    document.getElementById('openExternalPdf').href = art.rawPdf;
+    setTimeout(() => {
+      const viewer = document.getElementById('viewerContainer');
+      viewer.innerHTML = `<iframe src="${art.pdf}" title="${art.title}"></iframe>`;
+      document.getElementById('openExternalPdf').href = art.rawPdf;
+    }, 10);
 
     if (window.innerWidth <= 768) {
       document.getElementById('sidebar').classList.add('mobile-hidden');
-      document.getElementById('backBtn').style.display = 'inline-flex';
+      document.getElementById('closePdfBtn').style.display = 'inline-flex';
     }
   }
 
   function returnToList() {
     document.getElementById('sidebar').classList.remove('mobile-hidden');
-    document.getElementById('backBtn').style.display = 'none';
+    document.getElementById('closePdfBtn').style.display = 'none';
+    // 釋放 iframe 記憶體，防止手機瀏覽器因背景渲染累積而卡死
+    document.getElementById('viewerContainer').innerHTML = `
+      <div class="placeholder-view">
+        <h2>請從左側選擇一篇黑盒子手札</h2>
+        <p>解構未知的真相，在虛實交錯中沉浸閱讀。</p>
+      </div>
+    `;
+    currentArticleIndex = null;
+    renderCards(articles);
   }
 
   function toggleAudio() {
