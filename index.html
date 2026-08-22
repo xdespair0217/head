@@ -23,15 +23,20 @@
 
   * { box-sizing: border-box; }
 
-  body {
+  html, body {
     margin: 0;
     padding: 0;
+    width: 100%;
+    height: 100%;
+    height: 100dvh;
     background-color: var(--bg-dark);
     color: var(--text-main);
     font-family: 'Noto Sans TC', sans-serif;
-    display: flex;
-    height: 100vh;
     overflow: hidden;
+  }
+
+  body {
+    display: flex;
   }
 
   /* Left Sidebar */
@@ -41,28 +46,30 @@
     border-right: 1px solid var(--border-color);
     display: flex;
     flex-direction: column;
-    height: 100vh;
+    height: 100%;
+    height: 100dvh;
     box-shadow: 4px 0 15px rgba(0,0,0,0.3);
     z-index: 10;
-    transition: transform 0.3s ease;
+    transition: transform 0.25s ease;
   }
 
   .sidebar-header {
-    padding: 16px 20px;
+    padding: 14px 16px;
     border-bottom: 1px solid var(--border-color);
     background: linear-gradient(135deg, #18222d 0%, #1e2834 100%);
+    flex-shrink: 0;
   }
 
   .sidebar-title-row {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 10px;
+    margin-bottom: 8px;
   }
 
   .sidebar-title {
     font-family: 'Noto Serif TC', serif;
-    font-size: 14pt;
+    font-size: 13pt;
     font-weight: 700;
     color: var(--accent);
     margin: 0;
@@ -74,14 +81,14 @@
     color: #121820;
     font-size: 8pt;
     font-weight: 700;
-    padding: 3px 8px;
+    padding: 2px 8px;
     border-radius: 12px;
   }
 
   /* Search Bar */
   .search-box {
     position: relative;
-    margin-bottom: 10px;
+    margin-bottom: 8px;
   }
 
   .search-input {
@@ -89,7 +96,7 @@
     background-color: #121820;
     border: 1px solid var(--border-color);
     border-radius: 6px;
-    padding: 8px 12px 8px 34px;
+    padding: 7px 12px 7px 32px;
     color: var(--text-main);
     font-size: 9pt;
     outline: none;
@@ -103,27 +110,29 @@
     top: 50%;
     transform: translateY(-50%);
     color: var(--text-muted);
-    font-size: 10pt;
+    font-size: 9.5pt;
   }
 
   /* Tags Bar */
   .tags-container {
     display: flex;
     flex-wrap: wrap;
-    gap: 5px;
-    max-height: 70px;
+    gap: 4px;
+    max-height: 62px;
     overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
   }
 
   .filter-tag {
     background-color: var(--tag-bg);
     border: 1px solid var(--border-color);
     color: var(--text-muted);
-    font-size: 7.5pt;
-    padding: 3px 8px;
+    font-size: 7pt;
+    padding: 3px 6px;
     border-radius: 4px;
     cursor: pointer;
     transition: all 0.2s;
+    white-space: nowrap;
   }
 
   .filter-tag:hover, .filter-tag.active {
@@ -137,7 +146,9 @@
   .card-list {
     flex: 1;
     overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
     padding: 12px;
+    padding-bottom: 120px; /* 預留底部安全滑動邊界，防止被遮擋 */
     display: flex;
     flex-direction: column;
     gap: 10px;
@@ -150,6 +161,7 @@
     padding: 12px;
     cursor: pointer;
     transition: all 0.2s;
+    flex-shrink: 0;
   }
 
   .article-card:hover { border-color: var(--accent); }
@@ -180,7 +192,7 @@
 
   .card-title {
     font-family: 'Noto Serif TC', serif;
-    font-size: 10pt;
+    font-size: 9.5pt;
     font-weight: 600;
     color: var(--text-main);
     line-height: 1.35;
@@ -206,12 +218,13 @@
     flex: 1;
     display: flex;
     flex-direction: column;
-    height: 100vh;
+    height: 100%;
+    height: 100dvh;
     background-color: var(--bg-dark);
     position: relative;
   }
 
-  /* ================= 頂部導覽列 ================= */
+  /* Top Navbar */
   .top-navbar {
     background-color: var(--pot-bg);
     border-bottom: 1px solid #222831;
@@ -220,17 +233,18 @@
     justify-content: space-between;
     align-items: center;
     box-shadow: 0 4px 12px rgba(0,0,0,0.5);
-    height: 54px;
+    height: 50px;
+    flex-shrink: 0;
     z-index: 30;
   }
 
   .pot-console {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 8px;
     background: #101418;
     border: 1px solid #252e3a;
-    padding: 4px 10px;
+    padding: 3px 8px;
     border-radius: 6px;
   }
 
@@ -247,12 +261,12 @@
   .pot-display {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 6px;
   }
 
   .pot-time-big {
     font-family: 'Share Tech Mono', monospace;
-    font-size: 13pt;
+    font-size: 12pt;
     font-weight: bold;
     color: var(--pot-yellow);
     letter-spacing: 1px;
@@ -263,7 +277,7 @@
     display: flex;
     align-items: flex-end;
     gap: 2px;
-    height: 16px;
+    height: 14px;
     padding: 0 2px;
   }
 
@@ -285,14 +299,14 @@
     background: #252d37;
     border: 1px solid #3a4452;
     color: #fff;
-    width: 24px;
-    height: 24px;
+    width: 22px;
+    height: 22px;
     border-radius: 4px;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 8pt;
+    font-size: 7.5pt;
     transition: background 0.2s;
   }
   .pot-btn:hover { background: #344154; border-color: var(--pot-yellow); }
@@ -301,7 +315,7 @@
     display: flex;
     flex-direction: column;
     gap: 3px;
-    min-width: 160px;
+    min-width: 140px;
   }
 
   .pot-filename {
@@ -310,7 +324,7 @@
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    max-width: 160px;
+    max-width: 140px;
   }
 
   .pot-progress-container {
@@ -336,7 +350,7 @@
     background-color: var(--border-color);
     color: var(--text-main);
     font-weight: 600;
-    font-size: 7.5pt;
+    font-size: 7pt;
     padding: 5px 8px;
     border-radius: 4px;
     cursor: pointer;
@@ -349,7 +363,7 @@
     background-color: var(--accent);
     color: #121820;
     font-weight: 600;
-    font-size: 7.5pt;
+    font-size: 7pt;
     padding: 5px 8px;
     border-radius: 4px;
     text-decoration: none;
@@ -365,7 +379,7 @@
     border: none;
     padding: 5px 8px;
     border-radius: 4px;
-    font-size: 7.5pt;
+    font-size: 7pt;
     cursor: pointer;
     font-weight: 600;
     align-items: center;
@@ -375,7 +389,7 @@
   /* PDF Viewer Area */
   .viewer-container {
     flex: 1;
-    padding: 16px;
+    padding: 12px;
     background-color: #0d1218;
     display: flex;
     justify-content: center;
@@ -397,46 +411,28 @@
     color: var(--text-muted);
     font-family: 'Noto Serif TC', serif;
   }
-  .placeholder-view h2 { color: var(--accent); margin-bottom: 6px; font-size: 13pt; }
+  .placeholder-view h2 { color: var(--accent); margin-bottom: 6px; font-size: 12pt; }
 
+  /* Mobile Responsive Fixes */
   @media (max-width: 768px) {
     body { position: relative; }
     
     .top-navbar { 
-      height: 50px; 
-      padding: 4px 6px; 
+      height: 48px; 
+      padding: 4px 8px; 
     }
 
-    .pot-console { 
-      gap: 6px; 
-      padding: 2px 6px; 
-    }
-
-    .pot-brand, .pot-track-box { 
-      display: none; 
-    }
-
-    .pot-time-big { 
-      font-size: 11.5pt; 
-    }
-
-    .action-buttons { 
-      gap: 4px; 
-    }
-
-    .btn-action, .btn-external, .back-to-list-btn {
-      font-size: 7pt;
-      padding: 4px 6px;
-    }
-
+    .pot-brand, .pot-track-box { display: none; }
+    
     #sidebar {
       width: 100%;
       position: absolute;
       left: 0;
-      top: 50px;
-      height: calc(100vh - 50px);
+      top: 48px;
+      height: calc(100dvh - 48px);
+      height: calc(100vh - 48px);
       z-index: 20;
-      transition: transform 0.3s ease;
+      transition: transform 0.25s ease;
     }
     #sidebar.mobile-hidden { transform: translateX(-100%); }
 
@@ -445,6 +441,7 @@
       position: absolute;
       left: 0;
       top: 0;
+      height: 100dvh;
       height: 100vh;
       z-index: 5;
     }
@@ -521,6 +518,8 @@
   let articles = [];
   let currentActiveTag = "全部";
   let currentArticleIndex = null;
+  let isNavigating = false;
+
   const audio = document.getElementById('bgmAudio');
   const playBtn = document.getElementById('playBtn');
   const timeDisplay = document.getElementById('timeDisplay');
@@ -542,11 +541,9 @@
   function parseCSV(text) {
     const lines = text.split("\n");
     articles = [];
-    
     for (let i = 1; i < lines.length; i++) {
       const line = lines[i].trim();
       if (!line) continue;
-      
       const row = parseCSVRow(line);
       if (row.length >= 6) {
         const [date, series, title, rawTags, pdfLink, status] = row;
@@ -646,19 +643,28 @@
     renderCards(filtered);
   }
 
-  // 強化版非同步轉場：每次點擊前先徹底清空舊 iframe 記憶體，絕不卡死
   function selectArticle(idx) {
+    if (isNavigating) return;
+    isNavigating = true;
+
     currentArticleIndex = idx;
     const art = articles[idx];
     filterArticles();
 
+    safeClearViewer();
+
     const viewer = document.getElementById('viewerContainer');
-    viewer.innerHTML = ''; // 徹底銷毀舊的 iframe
+    viewer.innerHTML = `
+      <div style="color: var(--text-muted); font-size: 9pt; text-align: center;">
+        <span style="display:inline-block; animation: spin 1s infinite linear;">⟳</span> 正在載入數位手札...
+      </div>
+    `;
 
     setTimeout(() => {
       viewer.innerHTML = `<iframe src="${art.pdf}" title="${art.title}"></iframe>`;
       document.getElementById('openExternalPdf').href = art.rawPdf;
-    }, 20);
+      isNavigating = false;
+    }, 60);
 
     if (window.innerWidth <= 768) {
       document.getElementById('sidebar').classList.add('mobile-hidden');
@@ -667,22 +673,33 @@
   }
 
   function returnToList() {
+    if (isNavigating) return;
+    
     document.getElementById('sidebar').classList.remove('mobile-hidden');
     document.getElementById('backBtn').style.display = 'none';
-    
+
+    safeClearViewer();
+
     const viewer = document.getElementById('viewerContainer');
-    viewer.innerHTML = ''; // 徹底釋放 iframe 記憶體
-    setTimeout(() => {
-      viewer.innerHTML = `
-        <div class="placeholder-view">
-          <h2>請從左側選擇一篇黑盒子手札</h2>
-          <p>解構未知的真相，在虛實交錯中沉浸閱讀。</p>
-        </div>
-      `;
-    }, 10);
+    viewer.innerHTML = `
+      <div class="placeholder-view">
+        <h2>請從左側選擇一篇黑盒子手札</h2>
+        <p>解構未知的真相，在虛實交錯中沉浸閱讀。</p>
+      </div>
+    `;
 
     currentArticleIndex = null;
     renderCards(articles);
+  }
+
+  function safeClearViewer() {
+    const viewer = document.getElementById('viewerContainer');
+    const existingIframe = viewer.querySelector('iframe');
+    if (existingIframe) {
+      existingIframe.src = 'about:blank';
+      existingIframe.remove();
+    }
+    viewer.innerHTML = '';
   }
 
   function toggleAudio() {
