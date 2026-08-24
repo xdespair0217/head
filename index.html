@@ -35,7 +35,7 @@
     overflow: hidden;
   }
 
-  body { display: flex; }
+  body { display: flex; flex-direction: row; }
 
   /* Left Sidebar */
   #sidebar {
@@ -48,7 +48,7 @@
     height: 100dvh;
     box-shadow: 4px 0 15px rgba(0,0,0,0.3);
     z-index: 10;
-    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    flex-shrink: 0;
   }
 
   .sidebar-header {
@@ -129,7 +129,6 @@
     align-items: center;
     gap: 4px;
     white-space: nowrap;
-    transition: all 0.2s;
   }
   .tag-modal-btn:hover {
     background-color: var(--accent);
@@ -154,7 +153,6 @@
     padding: 3px 8px;
     border-radius: 4px;
     cursor: pointer;
-    transition: all 0.2s;
     white-space: nowrap;
     flex-shrink: 0;
   }
@@ -184,7 +182,6 @@
     border-radius: 6px;
     padding: 12px;
     cursor: pointer;
-    transition: all 0.2s;
     flex-shrink: 0;
   }
 
@@ -246,7 +243,7 @@
     height: 100dvh;
     background-color: var(--bg-dark);
     position: relative;
-    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    overflow: hidden;
   }
 
   /* Top Navbar */
@@ -334,7 +331,6 @@
     align-items: center;
     justify-content: center;
     font-size: 7.5pt;
-    transition: background 0.2s;
   }
   .pot-btn:hover { background: #344154; border-color: var(--pot-yellow); }
 
@@ -368,7 +364,6 @@
     height: 100%;
     width: 0%;
     border-radius: 2px;
-    position: relative;
   }
 
   .action-buttons { display: flex; gap: 6px; align-items: center; }
@@ -382,7 +377,6 @@
     border-radius: 4px;
     cursor: pointer;
     border: none;
-    transition: background 0.2s;
   }
   .btn-action:hover { background-color: #384658; }
 
@@ -399,20 +393,38 @@
     gap: 3px;
   }
 
-  /* 手機版專用：切換至 PDF 報告 / 返回列表 按鈕 */
-  .mobile-toggle-nav-btn {
+  /* 手機版頂部切換按鈕 (參考您喜歡的圖片樣式) */
+  .mobile-toggle-btn {
     display: none;
     background-color: var(--accent);
     color: #121820;
     border: none;
-    padding: 5px 10px;
+    padding: 5px 12px;
     border-radius: 4px;
     font-size: 7.5pt;
     font-weight: 700;
     cursor: pointer;
-    align-items: center;
-    gap: 4px;
     white-space: nowrap;
+  }
+
+  /* 您喜愛的精準工業風框框標頭 */
+  .pdf-framed-header {
+    background: #14171f;
+    border-bottom: 1px solid #262c38;
+    padding: 8px 16px;
+    display: none;
+    align-items: center;
+    justify-content: space-between;
+    flex-shrink: 0;
+  }
+  .pdf-framed-box {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    border: 1px solid rgba(200, 157, 102, 0.35);
+    background: #1a1e29;
+    padding: 4px 10px;
+    border-radius: 4px;
   }
 
   /* PDF Viewer Area */
@@ -421,9 +433,9 @@
     padding: 12px;
     background-color: #0d1218;
     display: flex;
-    justify-content: center;
-    align-items: center;
+    flex-direction: column;
     position: relative;
+    overflow: hidden;
   }
 
   iframe {
@@ -436,6 +448,7 @@
   }
 
   .placeholder-view {
+    margin: auto;
     text-align: center;
     color: var(--text-muted);
     font-family: 'Noto Serif TC', serif;
@@ -534,12 +547,10 @@
     display: inline-flex;
     align-items: center;
     gap: 6px;
-    transition: all 0.2s;
   }
   .galaxy-tag:hover {
     border-color: var(--accent);
     color: var(--accent);
-    transform: translateY(-2px);
   }
   .galaxy-tag-count {
     background: var(--tag-bg);
@@ -550,52 +561,33 @@
     border-radius: 10px;
   }
 
-  /* Mobile Responsive Fixes (平順的滑動與視圖切換) */
+  /* Mobile Responsive: 像第一個檔案那樣直接切換顯示，毫無延遲卡頓 */
   @media (max-width: 768px) {
-    body { position: relative; overflow: hidden; }
+    .mobile-toggle-btn { display: inline-block; }
     
-    .top-navbar { 
-      height: 48px; 
-      padding: 4px 8px; 
-    }
-
     .pot-track-box { display: none; }
-    
-    #sidebar {
-      width: 100%;
-      position: absolute;
-      left: 0;
-      top: 48px;
-      height: calc(100dvh - 48px);
-      height: calc(100vh - 48px);
-      z-index: 20;
-      transform: translateX(0);
+
+    /* 當處於列表模式時 */
+    body.mobile-view-list #sidebar {
+      display: flex !important;
+      width: 100% !important;
     }
-    #sidebar.mobile-hidden { 
-      transform: translateX(-100%); 
+    body.mobile-view-list #main-panel {
+      display: none !important;
     }
 
-    #main-panel {
-      width: 100%;
-      position: absolute;
-      left: 0;
-      top: 0;
-      height: 100dvh;
-      height: 100vh;
-      z-index: 15;
-      transform: translateX(100%);
+    /* 當處於 PDF 閱讀模式時 */
+    body.mobile-view-reader #sidebar {
+      display: none !important;
     }
-    #main-panel.mobile-active {
-      transform: translateX(0);
-    }
-
-    .mobile-toggle-nav-btn {
-      display: inline-flex;
+    body.mobile-view-reader #main-panel {
+      display: flex !important;
+      width: 100% !important;
     }
   }
 </style>
 </head>
-<body>
+<body class="mobile-view-list">
 
   <!-- LEFT SIDEBAR -->
   <div id="sidebar">
@@ -611,7 +603,6 @@
         </div>
         <button class="tag-modal-btn" onclick="openTagModal()">🏷️ 標籤庫</button>
       </div>
-      <!-- 顯示最多 20 個熱門標籤 -->
       <div class="tags-container" id="tagsContainer"></div>
     </div>
     <div class="card-list" id="cardList">
@@ -633,10 +624,8 @@
           <button class="pot-btn" onclick="stopAudio()">■</button>
         </div>
 
-        <!-- 手機版專用切換按鈕 -->
-        <button class="mobile-toggle-nav-btn" id="mobileToggleBtn" onclick="toggleMobileView()">
-          <span id="mobileToggleText">📄 切換至 PDF 報告</span>
-        </button>
+        <!-- 手機版即時切換按鈕 -->
+        <button class="mobile-toggle-btn" id="mobileToggleBtn" onclick="toggleMobileView()">返回列表</button>
 
         <div class="pot-display">
           <div class="pot-time-big" id="timeDisplay">00:00</div>
@@ -657,6 +646,15 @@
       <div class="action-buttons">
         <button class="btn-action" onclick="loadSheetData()">🔄 同步</button>
         <a href="#" id="openExternalPdf" target="_blank" class="btn-external">全螢幕 PDF ↗</a>
+      </div>
+    </div>
+
+    <!-- 精準工業風框框標頭 -->
+    <div class="pdf-framed-header" id="pdfFramedHeader">
+      <div class="pdf-framed-box">
+        <span style="font-size: 7.5pt; font-family: 'Share Tech Mono', monospace; color: var(--accent); font-weight: 700;" id="pdfSeriesTag">-</span>
+        <span style="color: var(--border-color);">/</span>
+        <span style="font-size: 8pt; color: var(--text-main); font-weight: 600;" id="pdfTitleTag">-</span>
       </div>
     </div>
 
@@ -703,7 +701,6 @@
   let currentActiveTag = "全部";
   let currentArticleIndex = null;
   let isNavigating = false;
-  let isMobileReaderMode = false; // 手機版目前是否在觀看 PDF 模式
 
   const audio = document.getElementById('bgmAudio');
   const playBtn = document.getElementById('playBtn');
@@ -863,47 +860,41 @@
 
     safeClearViewer();
 
+    // 顯示精準框框標頭與對應內容
+    document.getElementById('pdfFramedHeader').style.display = 'flex';
+    document.getElementById('pdfSeriesTag').innerText = art.series;
+    document.getElementById('pdfTitleTag').innerText = art.title;
+    document.getElementById('openExternalPdf').href = art.rawPdf;
+
     const viewer = document.getElementById('viewerContainer');
-    viewer.innerHTML = `
-      <div style="color: var(--text-muted); font-size: 9pt; text-align: center;">
+    const iframeWrapper = document.createElement('div');
+    iframeWrapper.style.cssText = "flex: 1; width: 100%; height: 100%; position: relative; background: #fff; border-radius: 6px; overflow: hidden;";
+    iframeWrapper.innerHTML = `
+      <div style="position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; color: var(--text-muted); font-size: 9pt; z-index: 1;">
         <span style="display:inline-block; animation: spin 1s infinite linear;">⟳</span> 正在載入數位手札...
       </div>
+      <iframe src="${art.pdf}" title="${art.title}" style="position: relative; z-index: 2; width:100%; height:100%; border:none;"></iframe>
     `;
 
-    setTimeout(() => {
-      viewer.innerHTML = `<iframe src="${art.pdf}" title="${art.title}"></iframe>`;
-      document.getElementById('openExternalPdf').href = art.rawPdf;
-      isNavigating = false;
-    }, 60);
+    viewer.appendChild(iframeWrapper);
+    isNavigating = false;
 
-    // 手機版：點擊文章後，平順滑向 PDF 報告畫面，並改變切換按鈕文字
+    // 手機版：瞬間切換至閱讀模式（無延遲、極致順暢）
     if (window.innerWidth <= 768) {
-      isMobileReaderMode = true;
-      document.getElementById('sidebar').classList.add('mobile-hidden');
-      document.getElementById('main-panel').classList.add('mobile-active');
-      document.getElementById('mobileToggleText').innerText = "← 返回列表";
+      document.body.className = "mobile-view-reader";
+      document.getElementById('mobileToggleBtn').innerText = "← 返回列表";
     }
   }
 
-  // 手機版頂部按鈕：在「PDF 報告」與「清單列表」之間平順切換
+  // 手機版切換按鈕事件
   function toggleMobileView() {
-    const sidebar = document.getElementById('sidebar');
-    const mainPanel = document.getElementById('main-panel');
-    const toggleText = document.getElementById('mobileToggleText');
-
-    if (isMobileReaderMode) {
-      // 切回列表
-      sidebar.classList.remove('mobile-hidden');
-      mainPanel.classList.remove('mobile-active');
-      toggleText.innerText = "📄 切換至 PDF 報告";
-      isMobileReaderMode = false;
+    const body = document.body;
+    if (body.classList.contains("mobile-view-reader")) {
+      body.className = "mobile-view-list";
     } else {
-      // 切到 PDF 報告
       if (currentArticleIndex !== null) {
-        sidebar.classList.add('mobile-hidden');
-        mainPanel.classList.add('mobile-active');
-        toggleText.innerText = "← 返回列表";
-        isMobileReaderMode = true;
+        body.className = "mobile-view-reader";
+        document.getElementById('mobileToggleBtn').innerText = "← 返回列表";
       } else {
         alert("請先從左側選擇一篇手札");
       }
@@ -912,12 +903,8 @@
 
   function safeClearViewer() {
     const viewer = document.getElementById('viewerContainer');
-    const existingIframe = viewer.querySelector('iframe');
-    if (existingIframe) {
-      existingIframe.src = 'about:blank';
-      existingIframe.remove();
-    }
-    viewer.innerHTML = '';
+    viewer.querySelectorAll('iframe, div').forEach(el => el.remove());
+    document.getElementById('pdfFram2edHeader') && (document.getElementById('pdfFramedHeader').style.display = 'none');
   }
 
   /* Obsidian Tag Modal Functions */
