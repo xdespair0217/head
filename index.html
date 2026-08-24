@@ -393,7 +393,7 @@
     gap: 3px;
   }
 
-  /* 手機版頂部切換按鈕 (參考您喜歡的圖片樣式) */
+  /* 手機版頂部切換按鈕 */
   .mobile-toggle-btn {
     display: none;
     background-color: var(--accent);
@@ -407,7 +407,7 @@
     white-space: nowrap;
   }
 
-  /* 您喜愛的精準工業風框框標頭 */
+  /* 精準工業風框框標頭 */
   .pdf-framed-header {
     background: #14171f;
     border-bottom: 1px solid #262c38;
@@ -561,13 +561,12 @@
     border-radius: 10px;
   }
 
-  /* Mobile Responsive: 像第一個檔案那樣直接切換顯示，毫無延遲卡頓 */
+  /* Mobile Responsive */
   @media (max-width: 768px) {
     .mobile-toggle-btn { display: inline-block; }
     
     .pot-track-box { display: none; }
 
-    /* 當處於列表模式時 */
     body.mobile-view-list #sidebar {
       display: flex !important;
       width: 100% !important;
@@ -576,7 +575,6 @@
       display: none !important;
     }
 
-    /* 當處於 PDF 閱讀模式時 */
     body.mobile-view-reader #sidebar {
       display: none !important;
     }
@@ -624,7 +622,6 @@
           <button class="pot-btn" onclick="stopAudio()">■</button>
         </div>
 
-        <!-- 手機版即時切換按鈕 -->
         <button class="mobile-toggle-btn" id="mobileToggleBtn" onclick="toggleMobileView()">返回列表</button>
 
         <div class="pot-display">
@@ -758,6 +755,10 @@
         }
       }
     }
+
+    // ★ 關鍵排序：按照日期由新到舊排序 (最新的在最上面)
+    articles.sort((a, b) => new Date(b.date) - new Date(a.date));
+
     initDashboard();
   }
 
@@ -860,7 +861,6 @@
 
     safeClearViewer();
 
-    // 顯示精準框框標頭與對應內容
     document.getElementById('pdfFramedHeader').style.display = 'flex';
     document.getElementById('pdfSeriesTag').innerText = art.series;
     document.getElementById('pdfTitleTag').innerText = art.title;
@@ -879,14 +879,12 @@
     viewer.appendChild(iframeWrapper);
     isNavigating = false;
 
-    // 手機版：瞬間切換至閱讀模式（無延遲、極致順暢）
     if (window.innerWidth <= 768) {
       document.body.className = "mobile-view-reader";
       document.getElementById('mobileToggleBtn').innerText = "← 返回列表";
     }
   }
 
-  // 手機版切換按鈕事件
   function toggleMobileView() {
     const body = document.body;
     if (body.classList.contains("mobile-view-reader")) {
@@ -904,7 +902,8 @@
   function safeClearViewer() {
     const viewer = document.getElementById('viewerContainer');
     viewer.querySelectorAll('iframe, div').forEach(el => el.remove());
-    document.getElementById('pdfFram2edHeader') && (document.getElementById('pdfFramedHeader').style.display = 'none');
+    const header = document.getElementById('pdfFramedHeader');
+    if (header) header.style.display = 'none';
   }
 
   /* Obsidian Tag Modal Functions */
