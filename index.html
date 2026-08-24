@@ -48,7 +48,7 @@
     height: 100dvh;
     box-shadow: 4px 0 15px rgba(0,0,0,0.3);
     z-index: 10;
-    transition: transform 0.25s ease;
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
   .sidebar-header {
@@ -246,6 +246,7 @@
     height: 100dvh;
     background-color: var(--bg-dark);
     position: relative;
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
   /* Top Navbar */
@@ -398,18 +399,20 @@
     gap: 3px;
   }
 
-  .back-to-list-btn {
+  /* 手機版專用：切換至 PDF 報告 / 返回列表 按鈕 */
+  .mobile-toggle-nav-btn {
     display: none;
-    background: var(--border-color);
-    color: var(--text-main);
+    background-color: var(--accent);
+    color: #121820;
     border: none;
-    padding: 5px 8px;
+    padding: 5px 10px;
     border-radius: 4px;
-    font-size: 7pt;
+    font-size: 7.5pt;
+    font-weight: 700;
     cursor: pointer;
-    font-weight: 600;
     align-items: center;
-    gap: 3px;
+    gap: 4px;
+    white-space: nowrap;
   }
 
   /* PDF Viewer Area */
@@ -547,9 +550,9 @@
     border-radius: 10px;
   }
 
-  /* Mobile Responsive Fixes */
+  /* Mobile Responsive Fixes (平順的滑動與視圖切換) */
   @media (max-width: 768px) {
-    body { position: relative; }
+    body { position: relative; overflow: hidden; }
     
     .top-navbar { 
       height: 48px; 
@@ -566,9 +569,11 @@
       height: calc(100dvh - 48px);
       height: calc(100vh - 48px);
       z-index: 20;
-      transition: transform 0.25s ease;
+      transform: translateX(0);
     }
-    #sidebar.mobile-hidden { transform: translateX(-100%); }
+    #sidebar.mobile-hidden { 
+      transform: translateX(-100%); 
+    }
 
     #main-panel {
       width: 100%;
@@ -577,7 +582,15 @@
       top: 0;
       height: 100dvh;
       height: 100vh;
-      z-index: 5;
+      z-index: 15;
+      transform: translateX(100%);
+    }
+    #main-panel.mobile-active {
+      transform: translateX(0);
+    }
+
+    .mobile-toggle-nav-btn {
+      display: inline-flex;
     }
   }
 </style>
@@ -618,8 +631,12 @@
         <div class="pot-controls">
           <button class="pot-btn" id="playBtn" onclick="toggleAudio()">▶</button>
           <button class="pot-btn" onclick="stopAudio()">■</button>
-          <button class="back-to-list-btn" id="backBtn" onclick="returnToList()">← 清單</button>
         </div>
+
+        <!-- 手機版專用切換按鈕 -->
+        <button class="mobile-toggle-nav-btn" id="mobileToggleBtn" onclick="toggleMobileView()">
+          <span id="mobileToggleText">📄 切換至 PDF 報告</span>
+        </button>
 
         <div class="pot-display">
           <div class="pot-time-big" id="timeDisplay">00:00</div>
@@ -686,6 +703,7 @@
   let currentActiveTag = "全部";
   let currentArticleIndex = null;
   let isNavigating = false;
+  let isMobileReaderMode = false; // 手機版目前是否在觀看 PDF 模式
 
   const audio = document.getElementById('bgmAudio');
   const playBtn = document.getElementById('playBtn');
@@ -771,7 +789,6 @@
     initAudioPlayer();
   }
 
-  // 頂部快捷列：依文章數量由多到少排序，最多呈現 20 個標籤
   function renderTags() {
     const tagCountMap = {};
     articles.forEach(a => {
@@ -859,30 +876,38 @@
       isNavigating = false;
     }, 60);
 
+    // 手機版：點擊文章後，平順滑向 PDF 報告畫面，並改變切換按鈕文字
     if (window.innerWidth <= 768) {
+      isMobileReaderMode = true;
       document.getElementById('sidebar').classList.add('mobile-hidden');
-      document.getElementById('backBtn').style.display = 'inline-flex';
+      document.getElementById('main-panel').classList.add('mobile-active');
+      document.getElementById('mobileToggleText').innerText = "← 返回列表";
     }
   }
 
-  function returnToList() {
-    if (isNavigating) return;
-    
-    document.getElementById('sidebar').classList.remove('mobile-hidden');
-    document.getElementById('backBtn').style.display = 'none';
+  // 手機版頂部按鈕：在「PDF 報告」與「清單列表」之間平順切換
+  function toggleMobileView() {
+    const sidebar = document.getElementById('sidebar');
+    const mainPanel = document.getElementById('main-panel');
+    const toggleText = document.getElementById('mobileToggleText');
 
-    safeClearViewer();
-
-    const viewer = document.getElementById('viewerContainer');
-    viewer.innerHTML = `
-      <div class="placeholder-view">
-        <h2>請從左側選擇一篇黑盒子手札</h2>
-        <p>解構未知的真相，在虛實交錯中沉浸閱讀。</p>
-      </div>
-    `;
-
-    currentArticleIndex = null;
-    renderCards(articles);
+    if (isMobileReaderMode) {
+      // 切回列表
+      sidebar.classList.remove('mobile-hidden');
+      mainPanel.classList.remove('mobile-active');
+      toggleText.innerText = "📄 切換至 PDF 報告";
+      isMobileReaderMode = false;
+    } else {
+      // 切到 PDF 報告
+      if (currentArticleIndex !== null) {
+        sidebar.classList.add('mobile-hidden');
+        mainPanel.classList.add('mobile-active');
+        toggleText.innerText = "← 返回列表";
+        isMobileReaderMode = true;
+      } else {
+        alert("請先從左側選擇一篇手札");
+      }
+    }
   }
 
   function safeClearViewer() {
@@ -895,7 +920,7 @@
     viewer.innerHTML = '';
   }
 
-  /* Obsidian Tag Modal Functions (完整標籤庫) */
+  /* Obsidian Tag Modal Functions */
   function openTagModal() {
     renderModalTags();
     document.getElementById('tagModalOverlay').classList.add('active');
